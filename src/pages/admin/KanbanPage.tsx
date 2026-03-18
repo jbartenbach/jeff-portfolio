@@ -2,7 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import {
-  loadDashboardData,
+  seedInitialData,
+  subscribeProjectsForUser,
+  subscribeTasksForUser,
   updateTask,
 } from '../../lib/firestoreOps'
 import type { KanbanColumn, Project, Task } from '../../lib/types'
@@ -28,14 +30,23 @@ export default function KanbanPage() {
 
   const reload = useCallback(async () => {
     if (!user) return
-    const { projects: p, tasks: t } = await loadDashboardData(user.uid)
-    setProjects(p)
-    setTasks(t)
+    setLoading(true)
+    setSlowLoad(false)
+    setLoadError(null)
+    try {
+      await seedInitialData(user.uid)
+    } catch (e) {
+      setLoadError(fmtErr(e))
+    } finally {
+      setLoading(false)
+    }
   }, [user])
 
   useEffect(() => {
     if (!user) return
     let cancel = false
+    let stopP: (() => void) | null = null
+    let stopT: (() => void) | null = null
     const t = window.setTimeout(() => {
       if (!cancel) setSlowLoad(true)
     }, 6000)
@@ -44,17 +55,47 @@ export default function KanbanPage() {
       setSlowLoad(false)
       setLoadError(null)
       try {
-        await reload()
+        await seedInitialData(user.uid)
+        if (cancel) return
+
+        let gotP = false
+        let gotT = false
+        stopP = subscribeProjectsForUser(
+          user.uid,
+          (p) => {
+            gotP = true
+            setProjects(p)
+            if (gotP && gotT) setLoading(false)
+          },
+          (e) => {
+            setLoadError(fmtErr(e))
+            setLoading(false)
+          },
+        )
+        stopT = subscribeTasksForUser(
+          user.uid,
+          (tt) => {
+            gotT = true
+            setTasks(tt)
+            if (gotP && gotT) setLoading(false)
+          },
+          (e) => {
+            setLoadError(fmtErr(e))
+            setLoading(false)
+          },
+        )
       } catch (e) {
         if (!cancel) setLoadError(fmtErr(e))
       } finally {
         window.clearTimeout(t)
-        if (!cancel) setLoading(false)
+        // cleared by snapshot callbacks once both have fired
       }
     })()
     return () => {
       cancel = true
       window.clearTimeout(t)
+      stopP?.()
+      stopT?.()
     }
   }, [user, reload])
 
@@ -85,9 +126,9 @@ export default function KanbanPage() {
 
   async function dropOnColumn(col: KanbanColumn) {
     if (!dragId) return
+    setTasks((prev) => prev.map((t) => (t.id === dragId ? { ...t, kanbanColumn: col } : t)))
     await updateTask(dragId, { kanbanColumn: col })
     setDragId(null)
-    await reload()
   }
 
   if (loading) {

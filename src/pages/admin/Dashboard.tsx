@@ -5,10 +5,9 @@ import { adminFirstName } from '../../lib/authAllowlist'
 import { isDueToday } from '../../lib/dates'
 import {
   createProject,
-  fetchProjectsForUser,
-  fetchTasksForUser,
-  loadDashboardData,
   seedInitialData,
+  subscribeProjectsForUser,
+  subscribeTasksForUser,
 } from '../../lib/firestoreOps'
 import type { Project, Task } from '../../lib/types'
 import { fetchTodayWeather } from '../../lib/weather'
@@ -42,18 +41,27 @@ export default function Dashboard() {
   }
 
   const reload = useCallback(async () => {
+    // Subscriptions keep data up to date; keep this for any manual retry.
     if (!user) return
-    const [p, t] = await Promise.all([
-      fetchProjectsForUser(user.uid),
-      fetchTasksForUser(user.uid),
-    ])
-    setProjects(p)
-    setTasks(t)
+    setDataLoading(true)
+    setSlowLoad(false)
+    setLoadError(null)
+    try {
+      await seedInitialData(user.uid)
+    } catch (e) {
+      setLoadError(
+        `${fmtErr(e)} Check Firestore is created and rules are published (see ADMIN_SETUP.md or firestore.rules).`,
+      )
+    } finally {
+      setDataLoading(false)
+    }
   }, [user])
 
   useEffect(() => {
     if (!user) return
     let cancel = false
+    let stopP: (() => void) | null = null
+    let stopT: (() => void) | null = null
     const t = window.setTimeout(() => {
       if (!cancel) setSlowLoad(true)
     }, 6000)
@@ -62,10 +70,39 @@ export default function Dashboard() {
       setSlowLoad(false)
       setLoadError(null)
       try {
-        const { projects: p, tasks: t } = await loadDashboardData(user.uid)
+        await seedInitialData(user.uid)
         if (cancel) return
-        setProjects(p)
-        setTasks(t)
+
+        let gotP = false
+        let gotT = false
+        stopP = subscribeProjectsForUser(
+          user.uid,
+          (p) => {
+            gotP = true
+            setProjects(p)
+            if (gotP && gotT) setDataLoading(false)
+          },
+          (e) => {
+            setLoadError(
+              `${fmtErr(e)} Check Firestore is created and rules are published (see ADMIN_SETUP.md or firestore.rules).`,
+            )
+            setDataLoading(false)
+          },
+        )
+        stopT = subscribeTasksForUser(
+          user.uid,
+          (tt) => {
+            gotT = true
+            setTasks(tt)
+            if (gotP && gotT) setDataLoading(false)
+          },
+          (e) => {
+            setLoadError(
+              `${fmtErr(e)} Check Firestore is created and rules are published (see ADMIN_SETUP.md or firestore.rules).`,
+            )
+            setDataLoading(false)
+          },
+        )
       } catch (err: unknown) {
         const msg = fmtErr(err)
         if (!cancel) {
@@ -75,12 +112,14 @@ export default function Dashboard() {
         }
       } finally {
         window.clearTimeout(t)
-        if (!cancel) setDataLoading(false)
+        // dataLoading is cleared by snapshot callbacks once both have fired
       }
     })()
     return () => {
       cancel = true
       window.clearTimeout(t)
+      stopP?.()
+      stopT?.()
     }
   }, [user])
 

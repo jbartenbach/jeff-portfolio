@@ -5,6 +5,7 @@ import {
   getDoc,
   getDocs,
   limit,
+  onSnapshot,
   query,
   serverTimestamp,
   updateDoc,
@@ -49,6 +50,61 @@ export async function fetchTasksForUser(uid: string): Promise<Task[]> {
   const q = query(tasksCol(), where('ownerUid', '==', uid))
   const snap = await getDocs(q)
   return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Task, 'id'>) }))
+}
+
+export function subscribeProjectsForUser(
+  uid: string,
+  onData: (projects: Project[]) => void,
+  onError?: (err: unknown) => void,
+) {
+  const q = query(projectsCol(), where('ownerUid', '==', uid))
+  return onSnapshot(
+    q,
+    { includeMetadataChanges: true },
+    (snap) => {
+      const list = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Project, 'id'>) }))
+      list.sort((a, b) => {
+        const ta = a.createdAt?.toMillis?.() ?? 0
+        const tb = b.createdAt?.toMillis?.() ?? 0
+        return tb - ta
+      })
+      onData(list)
+    },
+    (err) => onError?.(err),
+  )
+}
+
+export function subscribeTasksForUser(
+  uid: string,
+  onData: (tasks: Task[]) => void,
+  onError?: (err: unknown) => void,
+) {
+  const q = query(tasksCol(), where('ownerUid', '==', uid))
+  return onSnapshot(
+    q,
+    { includeMetadataChanges: true },
+    (snap) => onData(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Task, 'id'>) }))),
+    (err) => onError?.(err),
+  )
+}
+
+export function subscribeTasksForProject(
+  projectId: string,
+  uid: string,
+  onData: (tasks: Task[]) => void,
+  onError?: (err: unknown) => void,
+) {
+  const q = query(
+    tasksCol(),
+    where('ownerUid', '==', uid),
+    where('projectId', '==', projectId),
+  )
+  return onSnapshot(
+    q,
+    { includeMetadataChanges: true },
+    (snap) => onData(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Task, 'id'>) }))),
+    (err) => onError?.(err),
+  )
 }
 
 export async function fetchTasksForProject(projectId: string, uid: string): Promise<Task[]> {
@@ -194,11 +250,12 @@ export async function createTask(
     description: string
     dueDate: Timestamp | null
     orderIndex: number
+    kanbanColumn?: KanbanColumn
   },
 ) {
   return addDoc(tasksCol(), {
     ...data,
-    kanbanColumn: 'unstarted' as KanbanColumn,
+    kanbanColumn: data.kanbanColumn ?? ('unstarted' as KanbanColumn),
     ownerUid: uid,
     createdAt: serverTimestamp(),
   })

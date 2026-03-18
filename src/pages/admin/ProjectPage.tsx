@@ -5,9 +5,9 @@ import { useAuth } from '../../context/AuthContext'
 import { dueDateLabel, isDueToday, isDueTomorrow } from '../../lib/dates'
 import {
   createTask,
-  fetchTasksForProject,
   getProject,
   reorderTasks,
+  subscribeTasksForProject,
   updateProject,
   updateTask,
 } from '../../lib/firestoreOps'
@@ -53,7 +53,7 @@ export default function ProjectPage() {
 
   const load = useCallback(async () => {
     if (!user || !id) return
-    const [p, t] = await Promise.all([getProject(id), fetchTasksForProject(id, user.uid)])
+    const p = await getProject(id)
     if (!p || p.ownerUid !== user.uid) {
       setProject(null)
       setTasks([])
@@ -63,12 +63,12 @@ export default function ProjectPage() {
     setTitle(p.title)
     setDescription(p.description)
     setIsActive(p.isActive)
-    setTasks(sortTasks(t))
   }, [user, id])
 
   useEffect(() => {
     if (!user || !id) return
     let cancel = false
+    let stopTasks: (() => void) | null = null
     const t = window.setTimeout(() => {
       if (!cancel) setSlowLoad(true)
     }, 6000)
@@ -78,6 +78,13 @@ export default function ProjectPage() {
       setLoadError(null)
       try {
         await load()
+        if (cancel) return
+        stopTasks = subscribeTasksForProject(
+          id,
+          user.uid,
+          (tt) => setTasks(sortTasks(tt)),
+          (e) => setLoadError(fmtErr(e)),
+        )
       } catch (e) {
         if (!cancel) setLoadError(fmtErr(e))
       } finally {
@@ -88,6 +95,7 @@ export default function ProjectPage() {
     return () => {
       cancel = true
       window.clearTimeout(t)
+      stopTasks?.()
     }
   }, [load])
 
@@ -147,7 +155,6 @@ export default function ProjectPage() {
     ids.splice(to, 0, dragId)
     await reorderTasks(ids)
     setDragId(null)
-    await load()
   }
 
   if (!id) return <Navigate to="/admin/dashboard" replace />
