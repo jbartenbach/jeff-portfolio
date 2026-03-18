@@ -11,7 +11,8 @@ import {
   updateProject,
   updateTask,
 } from '../../lib/firestoreOps'
-import type { Project, Task } from '../../lib/types'
+import type { KanbanColumn, Project, Task } from '../../lib/types'
+import { KANBAN_COLUMNS } from '../../lib/types'
 
 function sortTasks(list: Task[]) {
   return [...list].sort((a, b) => {
@@ -40,7 +41,9 @@ export default function ProjectPage() {
 
   const [nt, setNt] = useState('')
   const [nd, setNd] = useState('')
-  const [nDue, setNDue] = useState('')
+  const [nCol, setNCol] = useState<KanbanColumn>('unstarted')
+  const [dueEnabled, setDueEnabled] = useState(false)
+  const [nDue, setNDue] = useState('') // YYYY-MM-DD
 
   const firebaseProjectId = import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined
 
@@ -122,15 +125,22 @@ export default function ProjectPage() {
     e.preventDefault()
     if (!user || !id || !nt.trim()) return
     const maxOrder = tasks.reduce((m, t) => Math.max(m, t.orderIndex), -1)
+    const dueDate =
+      dueEnabled && nDue
+        ? Timestamp.fromDate(new Date(`${nDue}T00:00:00`))
+        : null
     await createTask(user.uid, {
       projectId: id,
       title: nt.trim(),
       description: nd.trim(),
-      dueDate: nDue ? Timestamp.fromDate(new Date(nDue)) : null,
+      dueDate,
       orderIndex: maxOrder + 1,
+      kanbanColumn: nCol,
     })
     setNt('')
     setNd('')
+    setNCol('unstarted')
+    setDueEnabled(false)
     setNDue('')
     setLoading(true)
     setLoadError(null)
@@ -318,12 +328,54 @@ export default function ProjectPage() {
             value={nd}
             onChange={(e) => setNd(e.target.value)}
           />
-          <input
-            type="datetime-local"
-            className="rounded-lg border px-3 py-2 text-sm"
-            value={nDue}
-            onChange={(e) => setNDue(e.target.value)}
-          />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-slate-600">Status</span>
+              <select
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                value={nCol}
+                onChange={(e) => setNCol(e.target.value as KanbanColumn)}
+              >
+                {KANBAN_COLUMNS.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="space-y-1">
+              <span className="text-xs font-medium text-slate-600">Due date</span>
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-2 text-sm text-slate-700">
+                  <input
+                    type="checkbox"
+                    checked={dueEnabled}
+                    onChange={(e) => {
+                      const on = e.target.checked
+                      setDueEnabled(on)
+                      if (on && !nDue) {
+                        const d = new Date()
+                        const yyyy = d.getFullYear()
+                        const mm = String(d.getMonth() + 1).padStart(2, '0')
+                        const dd = String(d.getDate()).padStart(2, '0')
+                        setNDue(`${yyyy}-${mm}-${dd}`)
+                      }
+                      if (!on) setNDue('')
+                    }}
+                  />
+                  Set due
+                </label>
+                {dueEnabled ? (
+                  <input
+                    type="date"
+                    className="rounded-lg border px-3 py-2 text-sm"
+                    value={nDue}
+                    onChange={(e) => setNDue(e.target.value)}
+                  />
+                ) : null}
+              </div>
+            </div>
+          </div>
           <button type="submit" className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white">
             Add task
           </button>
