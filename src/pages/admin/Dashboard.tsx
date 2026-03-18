@@ -3,7 +3,13 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { adminFirstName } from '../../lib/authAllowlist'
 import { isDueToday } from '../../lib/dates'
-import { createProject, fetchProjectsForUser, fetchTasksForUser, loadDashboardData } from '../../lib/firestoreOps'
+import {
+  createProject,
+  fetchProjectsForUser,
+  fetchTasksForUser,
+  loadDashboardData,
+  seedInitialData,
+} from '../../lib/firestoreOps'
 import type { Project, Task } from '../../lib/types'
 import { fetchTodayWeather } from '../../lib/weather'
 
@@ -19,11 +25,21 @@ export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([])
   const [tasks, setTasks] = useState<Task[]>([])
   const [dataLoading, setDataLoading] = useState(true)
+  const [slowLoad, setSlowLoad] = useState(false)
   const [weather, setWeather] = useState<{ highF: number; summary: string } | null>(null)
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
   const [activeNew, setActiveNew] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
+
+  const firebaseProjectId = import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined
+
+  function fmtErr(err: unknown) {
+    const anyErr = err as { code?: string; message?: string }
+    if (anyErr?.code && anyErr?.message) return `${anyErr.code}: ${anyErr.message}`
+    if (anyErr?.message) return anyErr.message
+    return 'Could not load Firestore data.'
+  }
 
   const reload = useCallback(async () => {
     if (!user) return
@@ -38,8 +54,12 @@ export default function Dashboard() {
   useEffect(() => {
     if (!user) return
     let cancel = false
+    const t = window.setTimeout(() => {
+      if (!cancel) setSlowLoad(true)
+    }, 6000)
     ;(async () => {
       setDataLoading(true)
+      setSlowLoad(false)
       setLoadError(null)
       try {
         const { projects: p, tasks: t } = await loadDashboardData(user.uid)
@@ -47,19 +67,20 @@ export default function Dashboard() {
         setProjects(p)
         setTasks(t)
       } catch (err: unknown) {
-        const msg =
-          err instanceof Error ? err.message : 'Could not load Firestore data.'
+        const msg = fmtErr(err)
         if (!cancel) {
           setLoadError(
             `${msg} Check Firestore is created and rules are published (see ADMIN_SETUP.md or firestore.rules).`,
           )
         }
       } finally {
+        window.clearTimeout(t)
         if (!cancel) setDataLoading(false)
       }
     })()
     return () => {
       cancel = true
+      window.clearTimeout(t)
     }
   }, [user])
 
@@ -109,6 +130,39 @@ export default function Dashboard() {
         <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-900">
           <h1 className="text-lg font-semibold">Admin data could not load</h1>
           <p className="mt-2 text-sm">{loadError}</p>
+          <p className="mt-3 text-xs text-red-800/80">
+            Firebase project: <code className="rounded bg-red-100 px-1 py-0.5">{firebaseProjectId ?? '(missing)'}</code>
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => reload()}
+              className="rounded-lg bg-red-900 px-3 py-2 text-xs font-semibold text-white hover:bg-red-800"
+            >
+              Retry
+            </button>
+            <button
+              type="button"
+              onClick={async () => {
+                if (!user) return
+                setDataLoading(true)
+                setLoadError(null)
+                try {
+                  await seedInitialData(user.uid)
+                  await reload()
+                } catch (e) {
+                  setLoadError(
+                    `${fmtErr(e)} Check Firestore is created and rules are published (see ADMIN_SETUP.md or firestore.rules).`,
+                  )
+                } finally {
+                  setDataLoading(false)
+                }
+              }}
+              className="rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-900 hover:bg-red-50"
+            >
+              Seed demo data + retry
+            </button>
+          </div>
           <p className="mt-4 text-sm">
             Follow <strong>ADMIN_SETUP.md</strong> in the jeff-portfolio folder (Firestore + rules).
           </p>
@@ -155,7 +209,44 @@ export default function Dashboard() {
           </div>
 
           {dataLoading ? (
-            <div className="animate-pulse space-y-6" aria-busy="true" aria-label="Loading dashboard data">
+            <div className="space-y-3" aria-busy="true" aria-label="Loading dashboard data">
+              {slowLoad && (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+                  <p className="text-sm font-medium">Still loading…</p>
+                  <p className="mt-1 text-xs text-amber-900/80">
+                    If this never finishes, it usually means the deployed site is pointing at a different Firebase project
+                    (or Firestore/rules aren’t set up). Firebase project:{' '}
+                    <code className="rounded bg-amber-100 px-1 py-0.5">{firebaseProjectId ?? '(missing)'}</code>
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => reload()}
+                      className="rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-500"
+                    >
+                      Retry
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!user) return
+                        try {
+                          await seedInitialData(user.uid)
+                          await reload()
+                        } catch (e) {
+                          setLoadError(
+                            `${fmtErr(e)} Check Firestore is created and rules are published (see ADMIN_SETUP.md or firestore.rules).`,
+                          )
+                        }
+                      }}
+                      className="rounded-lg border border-amber-200 bg-white px-3 py-2 text-xs font-semibold text-amber-900 hover:bg-amber-100"
+                    >
+                      Seed demo data
+                    </button>
+                  </div>
+                </div>
+              )}
+              <div className="animate-pulse space-y-6">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="h-4 w-32 rounded bg-slate-200" />
                 <div className="mt-4 h-10 rounded-lg bg-slate-100" />
@@ -168,6 +259,7 @@ export default function Dashboard() {
                   <div className="h-12 rounded-lg bg-slate-100" />
                 </div>
               </div>
+            </div>
             </div>
           ) : (
             <>
