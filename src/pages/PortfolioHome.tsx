@@ -24,7 +24,40 @@ export default function PortfolioHome() {
       </header>
 
       <main>
-        <section className="mx-auto max-w-5xl px-6 py-20 md:py-28">
+        <section className="relative overflow-hidden border-b border-slate-800/60">
+          <div className="absolute inset-0">
+            <video
+              className="h-full w-full object-cover opacity-30"
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster="/hero-ui-loop-poster.svg"
+            >
+              {/* Placeholder path — replace with your real reel later */}
+              <source src="/hero-ui-loop.mp4" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-slate-950/70" />
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/80 to-slate-950" />
+          </div>
+
+          {/* Fallback animated shimmer (shows even if video 404s) */}
+          <div
+            className="pointer-events-none absolute inset-0 opacity-60"
+            style={{
+              background:
+                'radial-gradient(1200px 600px at 30% 40%, rgba(245,158,11,0.20), transparent 60%), radial-gradient(900px 500px at 70% 60%, rgba(56,189,248,0.14), transparent 60%)',
+              animation: 'heroGlow 10s ease-in-out infinite',
+            }}
+          />
+          <style>{`
+            @keyframes heroGlow {
+              0%, 100% { filter: saturate(1) blur(0px); transform: translateY(0px); }
+              50% { filter: saturate(1.15) blur(0.4px); transform: translateY(8px); }
+            }
+          `}</style>
+
+          <div className="relative mx-auto max-w-5xl px-6 py-20 md:py-28">
           <p className="mb-4 text-sm font-medium uppercase tracking-widest text-amber-500/90">
             Product &amp; UX Design Leader
           </p>
@@ -34,8 +67,9 @@ export default function PortfolioHome() {
           </h1>
           <p className="mt-8 max-w-2xl text-lg leading-relaxed text-slate-400">
             I partner with founders and product orgs to clarify vision, align stakeholders, and ship
-            experiences that feel inevitable. Former hands-on designer; today I lead direction,
-            systems, and the humans who build them.
+            experiences that feel inevitable—fast. I’m most at home where strategy meets craft:
+            exploring new interaction patterns, prototyping relentlessly, and using AI to accelerate
+            discovery, iteration, and decision-making.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <a
@@ -50,6 +84,7 @@ export default function PortfolioHome() {
             >
               Get in touch
             </a>
+          </div>
           </div>
         </section>
 
