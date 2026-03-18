@@ -5,12 +5,16 @@ import { adminFirstName } from '../../lib/authAllowlist'
 import { isDueToday } from '../../lib/dates'
 import {
   createProject,
+  createTask,
   seedInitialData,
   subscribeProjectsForUser,
   subscribeTasksForUser,
 } from '../../lib/firestoreOps'
-import type { Project, Task } from '../../lib/types'
+import type { KanbanColumn, Project, Task } from '../../lib/types'
+import { KANBAN_COLUMNS } from '../../lib/types'
 import { fetchTodayWeather } from '../../lib/weather'
+import Modal from '../../components/Modal'
+import { Timestamp } from 'firebase/firestore'
 
 function greeting() {
   const h = new Date().getHours()
@@ -20,16 +24,31 @@ function greeting() {
 }
 
 export default function Dashboard() {
-  const { user } = useAuth()
+  const { user, connectGoogleCalendar } = useAuth()
   const [projects, setProjects] = useState<Project[]>([])
   const [tasks, setTasks] = useState<Task[]>([])
   const [dataLoading, setDataLoading] = useState(true)
   const [slowLoad, setSlowLoad] = useState(false)
   const [weather, setWeather] = useState<{ highF: number; summary: string } | null>(null)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [projModalOpen, setProjModalOpen] = useState(false)
+  const [taskModalOpen, setTaskModalOpen] = useState(false)
+
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
   const [activeNew, setActiveNew] = useState(true)
-  const [loadError, setLoadError] = useState<string | null>(null)
+
+  const [taskTitle, setTaskTitle] = useState('')
+  const [taskDesc, setTaskDesc] = useState('')
+  const [taskProjectId, setTaskProjectId] = useState<string>('')
+  const [taskCol, setTaskCol] = useState<KanbanColumn>('unstarted')
+  const [taskDueEnabled, setTaskDueEnabled] = useState(false)
+  const [taskDue, setTaskDue] = useState('') // YYYY-MM-DD
+
+  const [calToken, setCalToken] = useState<string | null>(null)
+  const [calLoading, setCalLoading] = useState(false)
+  const [calError, setCalError] = useState<string | null>(null)
+  const [events, setEvents] = useState<{ start: string; title: string }[]>([])
 
   const firebaseProjectId = import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined
 
@@ -127,6 +146,10 @@ export default function Dashboard() {
     fetchTodayWeather().then(setWeather)
   }, [])
 
+  useEffect(() => {
+    if (!taskProjectId && projects.length > 0) setTaskProjectId(projects[0].id)
+  }, [projects, taskProjectId])
+
   const sortedProjects = useMemo(() => {
     return [...projects].sort((a, b) => {
       if (a.isActive !== b.isActive) return a.isActive ? -1 : 1
@@ -160,7 +183,68 @@ export default function Dashboard() {
     setTitle('')
     setDesc('')
     setActiveNew(true)
-    await reload()
+    setProjModalOpen(false)
+  }
+
+  async function onCreateTask(e: React.FormEvent) {
+    e.preventDefault()
+    if (!user || !taskTitle.trim() || !taskProjectId) return
+    const maxOrder = tasks
+      .filter((t) => t.projectId === taskProjectId)
+      .reduce((m, t) => Math.max(m, t.orderIndex), -1)
+    const dueDate =
+      taskDueEnabled && taskDue
+        ? Timestamp.fromDate(new Date(`${taskDue}T00:00:00`))
+        : null
+    await createTask(user.uid, {
+      projectId: taskProjectId,
+      title: taskTitle.trim(),
+      description: taskDesc.trim(),
+      dueDate,
+      orderIndex: maxOrder + 1,
+      kanbanColumn: taskCol,
+    })
+    setTaskTitle('')
+    setTaskDesc('')
+    setTaskCol('unstarted')
+    setTaskDueEnabled(false)
+    setTaskDue('')
+    setTaskModalOpen(false)
+  }
+
+  async function loadCalendarToday(token: string) {
+    setCalLoading(true)
+    setCalError(null)
+    try {
+      const start = new Date()
+      start.setHours(0, 0, 0, 0)
+      const end = new Date()
+      end.setHours(23, 59, 59, 999)
+      const qs = new URLSearchParams({
+        timeMin: start.toISOString(),
+        timeMax: end.toISOString(),
+        singleEvents: 'true',
+        orderBy: 'startTime',
+        maxResults: '10',
+      })
+      const res = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/primary/events?${qs.toString()}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      )
+      if (!res.ok) throw new Error(`Calendar API error: ${res.status}`)
+      const json = (await res.json()) as {
+        items?: { summary?: string; start?: { dateTime?: string; date?: string } }[]
+      }
+      const list = (json.items ?? []).map((i) => ({
+        title: i.summary ?? '(Untitled)',
+        start: i.start?.dateTime ?? i.start?.date ?? '',
+      }))
+      setEvents(list)
+    } catch (e) {
+      setCalError(e instanceof Error ? e.message : 'Could not load calendar.')
+    } finally {
+      setCalLoading(false)
+    }
   }
 
   if (loadError) {
@@ -239,11 +323,60 @@ export default function Dashboard() {
                 <p className="mt-2 text-sm text-slate-500">Couldn&apos;t load weather.</p>
               )}
             </div>
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5">
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Meetings today
+                Calendar today
               </h2>
-              <p className="mt-3 text-sm text-slate-400">No meetings connected yet. (Google Calendar next.)</p>
+              {!calToken ? (
+                <div className="mt-3 space-y-2">
+                  <p className="text-sm text-slate-500">
+                    Connect Google Calendar to show today’s events.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setCalError(null)
+                      const token = await connectGoogleCalendar()
+                      if (!token) {
+                        setCalError('Could not get a Calendar access token. (Enable Google Calendar API + consent screen.)')
+                        return
+                      }
+                      setCalToken(token)
+                      await loadCalendarToday(token)
+                    }}
+                    className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+                  >
+                    Connect calendar
+                  </button>
+                  {calError ? <p className="text-xs text-red-600">{calError}</p> : null}
+                </div>
+              ) : (
+                <div className="mt-3">
+                  <div className="flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => loadCalendarToday(calToken)}
+                      className="text-xs font-semibold text-amber-700 hover:text-amber-800"
+                      disabled={calLoading}
+                    >
+                      {calLoading ? 'Refreshing…' : 'Refresh'}
+                    </button>
+                  </div>
+                  {calError ? <p className="mt-2 text-xs text-red-600">{calError}</p> : null}
+                  {events.length === 0 ? (
+                    <p className="mt-2 text-sm text-slate-500">No events found.</p>
+                  ) : (
+                    <ul className="mt-2 space-y-1">
+                      {events.map((e, idx) => (
+                        <li key={idx} className="text-sm text-slate-700">
+                          <span className="font-medium text-slate-900">{e.title}</span>
+                          {e.start ? <span className="ml-2 text-xs text-slate-500">{new Date(e.start).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span> : null}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -304,7 +437,9 @@ export default function Dashboard() {
             <>
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-sm font-semibold text-slate-900">Tasks for today</h2>
+                  <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Tasks today
+                  </h2>
                   <Link
                     to="/admin/tasks"
                     className="text-sm font-medium text-amber-700 hover:text-amber-800"
@@ -331,66 +466,203 @@ export default function Dashboard() {
                 )}
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <h2 className="text-sm font-semibold text-slate-900">Projects</h2>
-                <p className="mt-1 text-xs text-slate-500">Active projects appear first.</p>
-                <ul className="mt-4 divide-y divide-slate-100">
-                  {sortedProjects.map((p) => (
-                    <li key={p.id}>
-                      <Link
-                        to={`/admin/projects/${p.id}`}
-                        className="flex items-center justify-between py-3 hover:bg-slate-50/80 -mx-2 px-2 rounded-lg"
-                      >
-                        <span className="font-medium text-slate-900">{p.title}</span>
-                        <span
-                          className={
-                            p.isActive
-                              ? 'rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800'
-                              : 'rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600'
-                          }
-                        >
-                          {p.isActive ? 'Active' : 'Inactive'}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-
-                <form onSubmit={onCreateProject} className="mt-6 border-t border-slate-100 pt-6 space-y-3">
-                  <h3 className="text-xs font-semibold uppercase text-slate-500">New project</h3>
-                  <input
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                    placeholder="Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                  <textarea
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                    placeholder="Description"
-                    rows={2}
-                    value={desc}
-                    onChange={(e) => setDesc(e.target.value)}
-                  />
-                  <label className="flex items-center gap-2 text-sm text-slate-700">
-                    <input
-                      type="checkbox"
-                      checked={activeNew}
-                      onChange={(e) => setActiveNew(e.target.checked)}
-                    />
-                    Active project
-                  </label>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Projects</h2>
+                  <p className="mt-1 text-xs text-slate-500">Each project is its own card.</p>
+                </div>
+                <div className="flex gap-2">
                   <button
-                    type="submit"
-                    className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+                    type="button"
+                    onClick={() => setTaskModalOpen(true)}
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-slate-50"
                   >
-                    Create project
+                    New task
                   </button>
-                </form>
+                  <button
+                    type="button"
+                    onClick={() => setProjModalOpen(true)}
+                    className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800"
+                  >
+                    New project
+                  </button>
+                </div>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {sortedProjects.map((p) => (
+                  <Link
+                    key={p.id}
+                    to={`/admin/projects/${p.id}`}
+                    className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:border-amber-300"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="text-base font-semibold text-slate-900">{p.title}</h3>
+                        {p.description ? (
+                          <p className="mt-1 text-sm text-slate-600 line-clamp-2">{p.description}</p>
+                        ) : null}
+                      </div>
+                      <span
+                        className={
+                          p.isActive
+                            ? 'rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800'
+                            : 'rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600'
+                        }
+                      >
+                        {p.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
               </div>
             </>
           )}
         </div>
       </div>
+      <Modal
+        open={projModalOpen}
+        title="New project"
+        onClose={() => {
+          setProjModalOpen(false)
+        }}
+      >
+        <form onSubmit={onCreateProject} className="space-y-3">
+          <input
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <textarea
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            placeholder="Description"
+            rows={3}
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+          />
+          <label className="flex items-center gap-2 text-sm text-slate-700">
+            <input
+              type="checkbox"
+              checked={activeNew}
+              onChange={(e) => setActiveNew(e.target.checked)}
+            />
+            Active project
+          </label>
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setProjModalOpen(false)}
+              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+            >
+              Create
+            </button>
+          </div>
+        </form>
+      </Modal>
+      <Modal
+        open={taskModalOpen}
+        title="New task"
+        onClose={() => setTaskModalOpen(false)}
+      >
+        <form onSubmit={onCreateTask} className="space-y-3">
+          <label className="space-y-1">
+            <span className="text-xs font-medium text-slate-600">Project</span>
+            <select
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              value={taskProjectId}
+              onChange={(e) => setTaskProjectId(e.target.value)}
+            >
+              {sortedProjects.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.title}
+                </option>
+              ))}
+            </select>
+          </label>
+          <input
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            placeholder="Title"
+            value={taskTitle}
+            onChange={(e) => setTaskTitle(e.target.value)}
+          />
+          <textarea
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            placeholder="Description (optional)"
+            rows={2}
+            value={taskDesc}
+            onChange={(e) => setTaskDesc(e.target.value)}
+          />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-slate-600">Status</span>
+              <select
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                value={taskCol}
+                onChange={(e) => setTaskCol(e.target.value as KanbanColumn)}
+              >
+                {KANBAN_COLUMNS.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="space-y-1">
+              <span className="text-xs font-medium text-slate-600">Due date</span>
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-2 text-sm text-slate-700">
+                  <input
+                    type="checkbox"
+                    checked={taskDueEnabled}
+                    onChange={(e) => {
+                      const on = e.target.checked
+                      setTaskDueEnabled(on)
+                      if (on && !taskDue) {
+                        const d = new Date()
+                        const yyyy = d.getFullYear()
+                        const mm = String(d.getMonth() + 1).padStart(2, '0')
+                        const dd = String(d.getDate()).padStart(2, '0')
+                        setTaskDue(`${yyyy}-${mm}-${dd}`)
+                      }
+                      if (!on) setTaskDue('')
+                    }}
+                  />
+                  Set due
+                </label>
+                {taskDueEnabled ? (
+                  <input
+                    type="date"
+                    className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                    value={taskDue}
+                    onChange={(e) => setTaskDue(e.target.value)}
+                  />
+                ) : null}
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setTaskModalOpen(false)}
+              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-500"
+            >
+              Create
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   )
 }
