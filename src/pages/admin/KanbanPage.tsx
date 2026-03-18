@@ -2,9 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import {
-  fetchProjectsForUser,
-  fetchTasksForUser,
-  seedInitialData,
+  loadDashboardData,
   updateTask,
 } from '../../lib/firestoreOps'
 import type { KanbanColumn, Project, Task } from '../../lib/types'
@@ -15,26 +13,49 @@ export default function KanbanPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
+  const [slowLoad, setSlowLoad] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [dragId, setDragId] = useState<string | null>(null)
+
+  const firebaseProjectId = import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined
+
+  function fmtErr(err: unknown) {
+    const anyErr = err as { code?: string; message?: string }
+    if (anyErr?.code && anyErr?.message) return `${anyErr.code}: ${anyErr.message}`
+    if (anyErr?.message) return anyErr.message
+    return 'Could not load Firestore data.'
+  }
 
   const reload = useCallback(async () => {
     if (!user) return
-    await seedInitialData(user.uid)
-    const [p, t] = await Promise.all([
-      fetchProjectsForUser(user.uid),
-      fetchTasksForUser(user.uid),
-    ])
+    const { projects: p, tasks: t } = await loadDashboardData(user.uid)
     setProjects(p)
     setTasks(t)
   }, [user])
 
   useEffect(() => {
     if (!user) return
+    let cancel = false
+    const t = window.setTimeout(() => {
+      if (!cancel) setSlowLoad(true)
+    }, 6000)
     ;(async () => {
       setLoading(true)
-      await reload()
-      setLoading(false)
+      setSlowLoad(false)
+      setLoadError(null)
+      try {
+        await reload()
+      } catch (e) {
+        if (!cancel) setLoadError(fmtErr(e))
+      } finally {
+        window.clearTimeout(t)
+        if (!cancel) setLoading(false)
+      }
     })()
+    return () => {
+      cancel = true
+      window.clearTimeout(t)
+    }
   }, [user, reload])
 
   const activeIds = useMemo(
@@ -70,7 +91,49 @@ export default function KanbanPage() {
   }
 
   if (loading) {
-    return <div className="mx-auto max-w-6xl px-4 py-12 text-slate-500">Loading board…</div>
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-12 text-slate-500">
+        <p>Loading board…</p>
+        {slowLoad && (
+          <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+            <p className="text-sm font-medium">Still loading…</p>
+            <p className="mt-1 text-xs text-amber-900/80">
+              Firebase project:{' '}
+              <code className="rounded bg-amber-100 px-1 py-0.5">{firebaseProjectId ?? '(missing)'}</code>
+            </p>
+            <button
+              type="button"
+              onClick={() => reload()}
+              className="mt-3 rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-500"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-12">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-900">
+          <h1 className="text-lg font-semibold">Tasks board could not load</h1>
+          <p className="mt-2 text-sm">{loadError}</p>
+          <p className="mt-3 text-xs text-red-800/80">
+            Firebase project:{' '}
+            <code className="rounded bg-red-100 px-1 py-0.5">{firebaseProjectId ?? '(missing)'}</code>
+          </p>
+          <button
+            type="button"
+            onClick={() => reload()}
+            className="mt-4 rounded-lg bg-red-900 px-3 py-2 text-xs font-semibold text-white hover:bg-red-800"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (

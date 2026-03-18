@@ -30,6 +30,8 @@ export default function ProjectPage() {
   const [project, setProject] = useState<Project | null>(null)
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
+  const [slowLoad, setSlowLoad] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [dragId, setDragId] = useState<string | null>(null)
 
   const [title, setTitle] = useState('')
@@ -40,26 +42,53 @@ export default function ProjectPage() {
   const [nd, setNd] = useState('')
   const [nDue, setNDue] = useState('')
 
+  const firebaseProjectId = import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined
+
+  function fmtErr(err: unknown) {
+    const anyErr = err as { code?: string; message?: string }
+    if (anyErr?.code && anyErr?.message) return `${anyErr.code}: ${anyErr.message}`
+    if (anyErr?.message) return anyErr.message
+    return 'Could not load Firestore data.'
+  }
+
   const load = useCallback(async () => {
     if (!user || !id) return
-    const p = await getProject(id)
+    const [p, t] = await Promise.all([getProject(id), fetchTasksForProject(id, user.uid)])
     if (!p || p.ownerUid !== user.uid) {
       setProject(null)
-      setLoading(false)
+      setTasks([])
       return
     }
     setProject(p)
     setTitle(p.title)
     setDescription(p.description)
     setIsActive(p.isActive)
-    const t = await fetchTasksForProject(id, user.uid)
     setTasks(sortTasks(t))
-    setLoading(false)
   }, [user, id])
 
   useEffect(() => {
-    setLoading(true)
-    load()
+    if (!user || !id) return
+    let cancel = false
+    const t = window.setTimeout(() => {
+      if (!cancel) setSlowLoad(true)
+    }, 6000)
+    ;(async () => {
+      setLoading(true)
+      setSlowLoad(false)
+      setLoadError(null)
+      try {
+        await load()
+      } catch (e) {
+        if (!cancel) setLoadError(fmtErr(e))
+      } finally {
+        window.clearTimeout(t)
+        if (!cancel) setLoading(false)
+      }
+    })()
+    return () => {
+      cancel = true
+      window.clearTimeout(t)
+    }
   }, [load])
 
   async function saveProject(e: React.FormEvent) {
@@ -70,7 +99,15 @@ export default function ProjectPage() {
       description: description.trim(),
       isActive,
     })
-    await load()
+    setLoading(true)
+    setLoadError(null)
+    try {
+      await load()
+    } catch (e) {
+      setLoadError(fmtErr(e))
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function addTask(e: React.FormEvent) {
@@ -87,7 +124,15 @@ export default function ProjectPage() {
     setNt('')
     setNd('')
     setNDue('')
-    await load()
+    setLoading(true)
+    setLoadError(null)
+    try {
+      await load()
+    } catch (e) {
+      setLoadError(fmtErr(e))
+    } finally {
+      setLoading(false)
+    }
   }
 
   const sorted = useMemo(() => sortTasks(tasks), [tasks])
@@ -110,8 +155,58 @@ export default function ProjectPage() {
     return <Navigate to="/admin/dashboard" replace />
   }
 
+  if (loadError) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-12">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-900">
+          <h1 className="text-lg font-semibold">Project could not load</h1>
+          <p className="mt-2 text-sm">{loadError}</p>
+          <p className="mt-3 text-xs text-red-800/80">
+            Firebase project:{' '}
+            <code className="rounded bg-red-100 px-1 py-0.5">{firebaseProjectId ?? '(missing)'}</code>
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => load().then(() => setLoadError(null))}
+              className="rounded-lg bg-red-900 px-3 py-2 text-xs font-semibold text-white hover:bg-red-800"
+            >
+              Retry
+            </button>
+            <Link
+              to="/admin/dashboard"
+              className="rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-900 hover:bg-red-50"
+            >
+              Back to dashboard
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   if (loading || !project) {
-    return <div className="mx-auto max-w-3xl px-4 py-12 text-slate-500">Loading…</div>
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-12 text-slate-500">
+        <p>Loading…</p>
+        {slowLoad && (
+          <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+            <p className="text-sm font-medium">Still loading…</p>
+            <p className="mt-1 text-xs text-amber-900/80">
+              Firebase project:{' '}
+              <code className="rounded bg-amber-100 px-1 py-0.5">{firebaseProjectId ?? '(missing)'}</code>
+            </p>
+            <button
+              type="button"
+              onClick={() => load()}
+              className="mt-3 rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-500"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+      </div>
+    )
   }
 
   return (
