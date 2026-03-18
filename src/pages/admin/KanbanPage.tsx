@@ -121,13 +121,17 @@ export default function KanbanPage() {
       const c = t.kanbanColumn in m ? t.kanbanColumn : 'unstarted'
       m[c].push(t)
     }
+    for (const c of Object.keys(m) as KanbanColumn[]) {
+      m[c].sort((a, b) => a.orderIndex - b.orderIndex)
+    }
     return m
   }, [boardTasks])
 
-  async function dropOnColumn(col: KanbanColumn) {
-    if (!dragId) return
-    setTasks((prev) => prev.map((t) => (t.id === dragId ? { ...t, kanbanColumn: col } : t)))
-    await updateTask(dragId, { kanbanColumn: col })
+  async function dropOnColumn(col: KanbanColumn, taskId: string | null) {
+    const id = taskId ?? dragId
+    if (!id) return
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, kanbanColumn: col } : t)))
+    await updateTask(id, { kanbanColumn: col })
     setDragId(null)
   }
 
@@ -195,7 +199,11 @@ export default function KanbanPage() {
             key={col.id}
             className="min-w-[260px] flex-1 rounded-2xl border border-slate-200 bg-slate-50/80 p-3"
             onDragOver={(e) => e.preventDefault()}
-            onDrop={() => dropOnColumn(col.id)}
+            onDrop={(e) => {
+              e.preventDefault()
+              const id = e.dataTransfer.getData('text/task-id') || null
+              dropOnColumn(col.id, id)
+            }}
           >
             <h2 className="mb-3 border-b border-slate-200 pb-2 text-xs font-bold uppercase tracking-wide text-slate-500">
               {col.label}
@@ -207,7 +215,15 @@ export default function KanbanPage() {
                   <li
                     key={t.id}
                     draggable
-                    onDragStart={() => setDragId(t.id)}
+                    onDragStart={(e) => {
+                      setDragId(t.id)
+                      try {
+                        e.dataTransfer.setData('text/task-id', t.id)
+                        e.dataTransfer.effectAllowed = 'move'
+                      } catch {
+                        // ignore
+                      }
+                    }}
                     className="cursor-grab rounded-xl border border-slate-200 bg-white p-3 shadow-sm active:cursor-grabbing"
                   >
                     <p className="text-sm font-medium text-slate-900">{t.title}</p>
