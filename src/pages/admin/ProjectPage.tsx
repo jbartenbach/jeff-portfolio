@@ -237,13 +237,13 @@ export default function ProjectPage() {
 
       <Card className="mt-6 space-y-4 p-6">
         <form onSubmit={saveProject} className="space-y-4">
-        <input
-          className="w-full text-2xl font-semibold text-slate-900 border-b border-transparent hover:border-slate-200 focus:border-amber-500 focus:outline-none"
+        <TextField
+          className="w-full border-transparent text-2xl font-semibold text-slate-900 hover:border-slate-200 focus:border-amber-500"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <textarea
-          className="w-full text-sm text-slate-600 border rounded-lg p-3"
+        <TextArea
+          className="w-full text-sm text-slate-600"
           rows={3}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -290,8 +290,8 @@ export default function ProjectPage() {
                 </div>
               </div>
               <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                <select
-                  className="rounded border border-slate-300 px-2 py-1"
+                <SelectField
+                  className="w-auto rounded px-2 py-1 text-xs"
                   value={t.kanbanColumn}
                   onChange={(e) => {
                     updateTask(t.id, {
@@ -304,7 +304,7 @@ export default function ProjectPage() {
                       {c.replace('_', ' ')}
                     </option>
                   ))}
-                </select>
+                </SelectField>
               </div>
             </li>
           ))}

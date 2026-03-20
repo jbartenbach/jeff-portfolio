@@ -10,6 +10,7 @@ import {
 import type { KanbanColumn, Project, Task } from '../../lib/types'
 import { KANBAN_COLUMNS } from '../../lib/types'
 import Card from '../../components/ui/Card'
+import Button from '../../components/ui/Button'
 
 export default function KanbanPage() {
   const { user } = useAuth()
@@ -147,13 +148,11 @@ export default function KanbanPage() {
               Firebase project:{' '}
               <code className="rounded bg-amber-100 px-1 py-0.5">{firebaseProjectId ?? '(missing)'}</code>
             </p>
-            <button
-              type="button"
-              onClick={() => reload()}
-              className="mt-3 rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-500"
-            >
-              Retry
-            </button>
+            <div className="mt-3">
+              <Button type="button" size="sm" variant="accent" onClick={() => reload()}>
+                Retry
+              </Button>
+            </div>
           </div>
         )}
       </div>
@@ -170,13 +169,11 @@ export default function KanbanPage() {
             Firebase project:{' '}
             <code className="rounded bg-red-100 px-1 py-0.5">{firebaseProjectId ?? '(missing)'}</code>
           </p>
-          <button
-            type="button"
-            onClick={() => reload()}
-            className="mt-4 rounded-lg bg-red-900 px-3 py-2 text-xs font-semibold text-white hover:bg-red-800"
-          >
-            Retry
-          </button>
+          <div className="mt-4">
+            <Button type="button" size="sm" variant="danger" onClick={() => reload()}>
+              Retry
+            </Button>
+          </div>
         </div>
       </div>
     )
