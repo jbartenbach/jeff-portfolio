@@ -13,6 +13,9 @@ import {
 } from '../../lib/firestoreOps'
 import type { KanbanColumn, Project, Task } from '../../lib/types'
 import { KANBAN_COLUMNS } from '../../lib/types'
+import Badge from '../../components/ui/Badge'
+import Card from '../../components/ui/Card'
+import Button from '../../components/ui/Button'
 
 function sortTasks(list: Task[]) {
   return [...list].sort((a, b) => {
@@ -175,7 +178,7 @@ export default function ProjectPage() {
   if (loadError) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-12">
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-900">
+        <Card className="border-red-200 bg-red-50 p-6 text-red-900">
           <h1 className="text-lg font-semibold">Project could not load</h1>
           <p className="mt-2 text-sm">{loadError}</p>
           <p className="mt-3 text-xs text-red-800/80">
@@ -183,13 +186,14 @@ export default function ProjectPage() {
             <code className="rounded bg-red-100 px-1 py-0.5">{firebaseProjectId ?? '(missing)'}</code>
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
-            <button
+            <Button
               type="button"
               onClick={() => load().then(() => setLoadError(null))}
-              className="rounded-lg bg-red-900 px-3 py-2 text-xs font-semibold text-white hover:bg-red-800"
+              variant="danger"
+              size="sm"
             >
               Retry
-            </button>
+            </Button>
             <Link
               to="/admin/dashboard"
               className="rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-900 hover:bg-red-50"
@@ -197,7 +201,7 @@ export default function ProjectPage() {
               Back to dashboard
             </Link>
           </div>
-        </div>
+        </Card>
       </div>
     )
   }
@@ -213,13 +217,11 @@ export default function ProjectPage() {
               Firebase project:{' '}
               <code className="rounded bg-amber-100 px-1 py-0.5">{firebaseProjectId ?? '(missing)'}</code>
             </p>
-            <button
-              type="button"
-              onClick={() => load()}
-              className="mt-3 rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-500"
-            >
-              Retry
-            </button>
+            <div className="mt-3">
+              <Button type="button" size="sm" variant="accent" onClick={() => load()}>
+                Retry
+              </Button>
+            </div>
           </div>
         )}
       </div>
@@ -232,7 +234,8 @@ export default function ProjectPage() {
         ← Dashboard
       </Link>
 
-      <form onSubmit={saveProject} className="mt-6 space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <Card className="mt-6 space-y-4 p-6">
+        <form onSubmit={saveProject} className="space-y-4">
         <input
           className="w-full text-2xl font-semibold text-slate-900 border-b border-transparent hover:border-slate-200 focus:border-amber-500 focus:outline-none"
           value={title}
@@ -248,10 +251,9 @@ export default function ProjectPage() {
           <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
           Active project (tasks appear on kanban)
         </label>
-        <button type="submit" className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-white">
-          Save
-        </button>
-      </form>
+        <Button type="submit">Save</Button>
+        </form>
+      </Card>
 
       <section className="mt-10">
         <h2 className="text-lg font-semibold text-slate-900">Tasks</h2>
@@ -276,19 +278,13 @@ export default function ProjectPage() {
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {isDueToday(t.dueDate) || t.kanbanColumn === 'today' ? (
-                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900">
-                      Today
-                    </span>
+                    <Badge variant="warning">Today</Badge>
                   ) : null}
                   {isDueTomorrow(t.dueDate) || t.kanbanColumn === 'tomorrow' ? (
-                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-900">
-                      Tomorrow
-                    </span>
+                    <Badge variant="info">Tomorrow</Badge>
                   ) : null}
                   {dueDateLabel(t.dueDate) && !isDueToday(t.dueDate) && !isDueTomorrow(t.dueDate) ? (
-                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-700">
-                      Due {dueDateLabel(t.dueDate)}
-                    </span>
+                    <Badge variant="neutral">Due {dueDateLabel(t.dueDate)}</Badge>
                   ) : null}
                 </div>
               </div>
@@ -376,9 +372,9 @@ export default function ProjectPage() {
               </div>
             </div>
           </div>
-          <button type="submit" className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white">
+          <Button type="submit" variant="accent">
             Add task
-          </button>
+          </Button>
         </form>
       </section>
     </div>

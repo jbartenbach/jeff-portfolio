@@ -9,6 +9,7 @@ import {
 } from '../../lib/firestoreOps'
 import type { KanbanColumn, Project, Task } from '../../lib/types'
 import { KANBAN_COLUMNS } from '../../lib/types'
+import Card from '../../components/ui/Card'
 
 export default function KanbanPage() {
   const { user } = useAuth()
@@ -195,9 +196,9 @@ export default function KanbanPage() {
 
       <div className="flex gap-3 overflow-x-auto pb-4">
         {KANBAN_COLUMNS.map((col) => (
-          <div
+          <Card
             key={col.id}
-            className="min-w-[260px] flex-1 rounded-2xl border border-slate-200 bg-slate-50/80 p-3"
+            className="min-w-[260px] flex-1 rounded-2xl bg-slate-50/80 p-3 shadow-none hover:border-slate-200"
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
               e.preventDefault()
@@ -205,7 +206,7 @@ export default function KanbanPage() {
               dropOnColumn(col.id, id)
             }}
           >
-            <h2 className="mb-3 border-b border-slate-200 pb-2 text-xs font-bold uppercase tracking-wide text-slate-500">
+            <h2 className="ds-section-label mb-3 border-b border-slate-200 pb-2">
               {col.label}
             </h2>
             <ul className="space-y-2">
@@ -232,7 +233,7 @@ export default function KanbanPage() {
                 )
               })}
             </ul>
-          </div>
+          </Card>
         ))}
       </div>
     </div>
