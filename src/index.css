@@ -4,6 +4,28 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --ds-radius-md: 0.75rem;
+  --ds-radius-lg: 1rem;
+  --ds-radius-xl: 1.25rem;
+
+  --ds-space-1: 0.25rem;
+  --ds-space-2: 0.5rem;
+  --ds-space-3: 0.75rem;
+  --ds-space-4: 1rem;
+  --ds-space-5: 1.25rem;
+  --ds-space-6: 1.5rem;
+
+  --ds-shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.06);
+  --ds-shadow-md: 0 8px 20px rgba(2, 6, 23, 0.08);
+}
+
 body {
   @apply antialiased text-slate-900 bg-white;
+}
+
+@layer components {
+  .ds-section-label {
+    @apply text-xs font-semibold uppercase tracking-wide text-slate-500;
+  }
 }

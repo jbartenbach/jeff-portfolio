@@ -15,6 +15,9 @@ import { KANBAN_COLUMNS } from '../../lib/types'
 import { fetchTodayWeather } from '../../lib/weather'
 import Modal from '../../components/Modal'
 import { Timestamp } from 'firebase/firestore'
+import Button from '../../components/ui/Button'
+import Card from '../../components/ui/Card'
+import { SelectField, TextArea, TextField } from '../../components/ui/Field'
 
 function greeting() {
   const h = new Date().getHours()
@@ -310,10 +313,8 @@ export default function Dashboard() {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Weather today
-              </h2>
+            <Card>
+              <h2 className="ds-section-label">Weather today</h2>
               {weather ? (
                 <p className="mt-2 text-2xl font-semibold text-slate-900">
                   {weather.highF}°F
@@ -322,18 +323,17 @@ export default function Dashboard() {
               ) : (
                 <p className="mt-2 text-sm text-slate-500">Couldn&apos;t load weather.</p>
               )}
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Calendar today
-              </h2>
+            </Card>
+            <Card>
+              <h2 className="ds-section-label">Calendar today</h2>
               {!calToken ? (
                 <div className="mt-3 space-y-2">
                   <p className="text-sm text-slate-500">
                     Connect Google Calendar to show today’s events.
                   </p>
-                  <button
+                  <Button
                     type="button"
+                    size="md"
                     onClick={async () => {
                       setCalError(null)
                       const token = await connectGoogleCalendar()
@@ -344,10 +344,9 @@ export default function Dashboard() {
                       setCalToken(token)
                       await loadCalendarToday(token)
                     }}
-                    className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800"
                   >
                     Connect calendar
-                  </button>
+                  </Button>
                   {calError ? <p className="text-xs text-red-600">{calError}</p> : null}
                 </div>
               ) : (
@@ -377,7 +376,7 @@ export default function Dashboard() {
                   )}
                 </div>
               )}
-            </div>
+            </Card>
           </div>
 
           {dataLoading ? (
@@ -435,11 +434,9 @@ export default function Dashboard() {
             </div>
           ) : (
             <>
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <Card>
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Tasks today
-                  </h2>
+                  <h2 className="ds-section-label">Tasks today</h2>
                   <Link
                     to="/admin/tasks"
                     className="text-sm font-medium text-amber-700 hover:text-amber-800"
@@ -464,37 +461,26 @@ export default function Dashboard() {
                     })}
                   </ul>
                 )}
-              </div>
+              </Card>
 
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Projects</h2>
+                  <h2 className="ds-section-label">Projects</h2>
                   <p className="mt-1 text-xs text-slate-500">Each project is its own card.</p>
                 </div>
                 <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setTaskModalOpen(true)}
-                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-slate-50"
-                  >
+                  <Button type="button" variant="secondary" size="sm" onClick={() => setTaskModalOpen(true)}>
                     New task
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setProjModalOpen(true)}
-                    className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800"
-                  >
+                  </Button>
+                  <Button type="button" size="sm" onClick={() => setProjModalOpen(true)}>
                     New project
-                  </button>
+                  </Button>
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 {sortedProjects.map((p) => (
-                  <Link
-                    key={p.id}
-                    to={`/admin/projects/${p.id}`}
-                    className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:border-amber-300"
-                  >
+                  <Card key={p.id} className="hover:border-amber-300">
+                    <Link to={`/admin/projects/${p.id}`}>
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <h3 className="text-base font-semibold text-slate-900">{p.title}</h3>
@@ -512,7 +498,8 @@ export default function Dashboard() {
                         {p.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </div>
-                  </Link>
+                    </Link>
+                  </Card>
                 ))}
               </div>
             </>
@@ -527,14 +514,12 @@ export default function Dashboard() {
         }}
       >
         <form onSubmit={onCreateProject} className="space-y-3">
-          <input
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          <TextField
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-          <textarea
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          <TextArea
             placeholder="Description"
             rows={3}
             value={desc}
@@ -549,19 +534,12 @@ export default function Dashboard() {
             Active project
           </label>
           <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={() => setProjModalOpen(false)}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-            >
+            <Button type="button" variant="secondary" onClick={() => setProjModalOpen(false)}>
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800"
-            >
+            </Button>
+            <Button type="submit">
               Create
-            </button>
+            </Button>
           </div>
         </form>
       </Modal>
@@ -573,8 +551,7 @@ export default function Dashboard() {
         <form onSubmit={onCreateTask} className="space-y-3">
           <label className="space-y-1">
             <span className="text-xs font-medium text-slate-600">Project</span>
-            <select
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            <SelectField
               value={taskProjectId}
               onChange={(e) => setTaskProjectId(e.target.value)}
             >
@@ -583,16 +560,14 @@ export default function Dashboard() {
                   {p.title}
                 </option>
               ))}
-            </select>
+            </SelectField>
           </label>
-          <input
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          <TextField
             placeholder="Title"
             value={taskTitle}
             onChange={(e) => setTaskTitle(e.target.value)}
           />
-          <textarea
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          <TextArea
             placeholder="Description (optional)"
             rows={2}
             value={taskDesc}
@@ -601,8 +576,7 @@ export default function Dashboard() {
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="space-y-1">
               <span className="text-xs font-medium text-slate-600">Status</span>
-              <select
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              <SelectField
                 value={taskCol}
                 onChange={(e) => setTaskCol(e.target.value as KanbanColumn)}
               >
@@ -611,7 +585,7 @@ export default function Dashboard() {
                     {c.label}
                   </option>
                 ))}
-              </select>
+              </SelectField>
             </label>
             <div className="space-y-1">
               <span className="text-xs font-medium text-slate-600">Due date</span>
@@ -647,19 +621,12 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={() => setTaskModalOpen(false)}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-            >
+            <Button type="button" variant="secondary" onClick={() => setTaskModalOpen(false)}>
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-500"
-            >
+            </Button>
+            <Button type="submit" variant="accent">
               Create
-            </button>
+            </Button>
           </div>
         </form>
       </Modal>
