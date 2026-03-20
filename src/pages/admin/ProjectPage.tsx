@@ -16,6 +16,7 @@ import { KANBAN_COLUMNS } from '../../lib/types'
 import Badge from '../../components/ui/Badge'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
+import { SelectField, TextArea, TextField } from '../../components/ui/Field'
 
 function sortTasks(list: Task[]) {
   return [...list].sort((a, b) => {
@@ -311,14 +312,14 @@ export default function ProjectPage() {
 
         <form onSubmit={addTask} className="mt-8 space-y-3 rounded-xl border border-dashed border-slate-300 p-4">
           <h3 className="text-sm font-semibold text-slate-800">New task</h3>
-          <input
-            className="w-full rounded-lg border px-3 py-2 text-sm"
+          <TextField
+            className="w-full"
             placeholder="Title"
             value={nt}
             onChange={(e) => setNt(e.target.value)}
           />
-          <textarea
-            className="w-full rounded-lg border px-3 py-2 text-sm"
+          <TextArea
+            className="w-full"
             placeholder="Description (optional)"
             rows={2}
             value={nd}
@@ -327,8 +328,8 @@ export default function ProjectPage() {
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="space-y-1">
               <span className="text-xs font-medium text-slate-600">Status</span>
-              <select
-                className="w-full rounded-lg border px-3 py-2 text-sm"
+              <SelectField
+                className="w-full"
                 value={nCol}
                 onChange={(e) => setNCol(e.target.value as KanbanColumn)}
               >
@@ -337,7 +338,7 @@ export default function ProjectPage() {
                     {c.label}
                   </option>
                 ))}
-              </select>
+              </SelectField>
             </label>
             <div className="space-y-1">
               <span className="text-xs font-medium text-slate-600">Due date</span>
@@ -362,9 +363,9 @@ export default function ProjectPage() {
                   Set due
                 </label>
                 {dueEnabled ? (
-                  <input
+                  <TextField
                     type="date"
-                    className="rounded-lg border px-3 py-2 text-sm"
+                    className="w-full"
                     value={nDue}
                     onChange={(e) => setNDue(e.target.value)}
                   />

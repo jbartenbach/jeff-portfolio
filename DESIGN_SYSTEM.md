@@ -44,6 +44,6 @@ Located in `src/components/ui/`:
 
 - Add typography tokens + utility classes (display, heading, body, label).
 - Add semantic color tokens (`success`, `warning`, `danger`, `info`) for both themes.
-- Add `Badge`, `Tabs`, and `EmptyState` primitives.
+- Add `Tabs` primitive (optional now) and then refactor remaining admin forms/boards to use shared components consistently.
 - Add Storybook or lightweight preview page for component states.
 
