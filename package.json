@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "design:tokens": "node scripts/generate-design-tokens.mjs",
+    "design:components": "node scripts/generate-component-manifest.mjs",
+    "design:sync": "npm run design:tokens && npm run design:components"
   },
   "dependencies": {
     "firebase": "^12.10.0",

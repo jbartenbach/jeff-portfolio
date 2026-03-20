@@ -1,0 +1,82 @@
+{
+  "generatedAt": "2026-03-20T15:47:02.809Z",
+  "source": "src/components/ui/*.tsx",
+  "components": {
+    "Button": {
+      "file": "src/components/ui/Button.tsx",
+      "props": {
+        "variant": [
+          "primary",
+          "secondary",
+          "ghost",
+          "accent",
+          "danger"
+        ],
+        "size": [
+          "sm",
+          "md"
+        ]
+      },
+      "defaults": {
+        "variant": "primary",
+        "size": "md"
+      },
+      "notes": "Map to Figma component set: Button / variant / size / state."
+    },
+    "Badge": {
+      "file": "src/components/ui/Badge.tsx",
+      "props": {
+        "variant": [
+          "neutral",
+          "success",
+          "warning",
+          "info",
+          "danger",
+          "accent"
+        ],
+        "size": [
+          "sm",
+          "md"
+        ]
+      },
+      "defaults": {
+        "variant": "neutral",
+        "size": "sm"
+      },
+      "notes": "Map to Figma component set: Badge / variant / size."
+    },
+    "Field": {
+      "file": "src/components/ui/Field.tsx",
+      "exports": [
+        "TextField",
+        "TextArea",
+        "SelectField"
+      ],
+      "baseClass": "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm",
+      "notes": "Use one Figma field base with kind=Text|Textarea|Select."
+    },
+    "Card": {
+      "file": "src/components/ui/Card.tsx",
+      "baseClass": "rounded-2xl border border-slate-200 bg-white p-5 shadow-sm",
+      "notes": "Use as shared surface primitive."
+    },
+    "Tabs": {
+      "file": "src/components/ui/Tabs.tsx",
+      "props": [
+        "defaultValue",
+        "value",
+        "onValueChange"
+      ],
+      "notes": "Primitive placeholder; refine when tabs are used in screens."
+    },
+    "Modal": {
+      "file": "src/components/Modal.tsx",
+      "props": [
+        "open",
+        "title",
+        "onClose"
+      ],
+      "notes": "Shared overlay/dialog shell."
+    }
+  }
+}
