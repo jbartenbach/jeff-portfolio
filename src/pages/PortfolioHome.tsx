@@ -6,20 +6,17 @@ export default function PortfolioHome() {
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <header className="border-b border-slate-800/80">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
-          <span className="font-display text-2xl tracking-tight text-white">Jeff</span>
+          <span className="font-display text-2xl tracking-tight text-white">Jeff Bartenbach</span>
           <nav className="flex gap-8 text-sm font-medium text-slate-400">
             <a href="#work" className="hover:text-white transition-colors">
               Work
             </a>
-            <a href="#leadership" className="hover:text-white transition-colors">
-              Leadership
+            <a href="#about" className="hover:text-white transition-colors">
+              About
             </a>
             <a href="#contact" className="hover:text-white transition-colors">
               Contact
             </a>
-            <Link to="/admin" className="text-amber-400/90 hover:text-amber-300 transition-colors">
-              Admin
-            </Link>
           </nav>
         </div>
       </header>
@@ -89,84 +86,148 @@ export default function PortfolioHome() {
           </div>
         </section>
 
-        <section id="work" className="border-t border-slate-800/80 bg-slate-900/40 py-20">
-          <div className="mx-auto max-w-5xl px-6">
-            <h2 className="font-display text-3xl text-white md:text-4xl">Selected work</h2>
-            <p className="mt-3 max-w-xl text-slate-400">
-              Case studies and narratives—replace these cards with your real projects.
-            </p>
-            <div className="mt-12 grid gap-6 md:grid-cols-2">
+        <section className="border-y border-slate-800/70">
+          <div className="mx-auto grid max-w-6xl gap-px bg-slate-800/70 md:grid-cols-4">
+            {[
+              { n: '20+', l: 'Years of craft across hardware, software, health, and consumer tech' },
+              { n: '0→1M', l: 'Founded design teams and scaled products to over a million users' },
+              { n: '3×', l: 'Average order value lift while improving conversion and retention' },
+              { n: '85%', l: 'Reduction in customer service calls through design-led product improvement' },
+            ].map((s) => (
+              <div key={s.n} className="bg-slate-950 p-8 hover:bg-slate-900/70 transition-colors">
+                <div className="font-display text-5xl leading-none text-white">
+                  {s.n.replace('+', '')}
+                  {s.n.includes('+') ? <em className="text-amber-500 not-italic">+</em> : null}
+                  {s.n.includes('×') ? <em className="text-amber-500 not-italic">×</em> : null}
+                </div>
+                <p className="mt-3 text-sm text-slate-400">{s.l}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="about" className="border-b border-slate-800/70 py-20">
+          <div className="mx-auto grid max-w-6xl gap-10 px-6 lg:grid-cols-[260px_1fr]">
+            <div>
+              <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-slate-500">What I do</p>
+              <h2 className="mt-4 font-display text-3xl leading-tight text-white">
+                Design leadership at <em className="text-slate-400 not-italic">every layer</em> of the stack.
+              </h2>
+            </div>
+            <div className="grid gap-px bg-slate-800/70 md:grid-cols-3">
               {[
-                {
-                  t: 'Platform redesign',
-                  d: 'Unifying a fragmented B2B workflow into a single, learnable surface.',
-                },
-                {
-                  t: 'Design org at scale',
-                  d: 'Rituals, crits, and hiring—how we raised the bar without slowing delivery.',
-                },
-                {
-                  t: '0→1 product',
-                  d: 'Discovery through launch: narrative, IA, and a design system in eight weeks.',
-                },
-                {
-                  t: 'Accessibility push',
-                  d: 'Partnering with eng to ship WCAG-aligned patterns across the stack.',
-                },
-              ].map((c) => (
-                <Card
-                  key={c.t}
-                  className="group border-slate-800 bg-slate-900/60 p-8 transition-colors hover:border-slate-700"
-                >
-                  <h3 className="text-lg font-semibold text-white group-hover:text-amber-400/90 transition-colors">
-                    {c.t}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-400">{c.d}</p>
+                ['01', 'Design leadership', 'Built teams from 0 to 7. Established hiring, critique culture, and cross-functional practice that outlasts any single project.'],
+                ['02', '0-to-1 product', 'Founded and shipped first versions of Wink, Maximus Health platform, and others — from concept through engineering handoff.'],
+                ['03', 'Systems at scale', 'Designed architecture for 40+ brand partners and 1M+ users. Built design systems that teams actually use.'],
+                ['04', 'Research & strategy', 'Organized research teams, ran prototyping cycles, distilled user insight into product direction that moves the business.'],
+                ['05', 'Cross-functional craft', 'Fluent across hardware, software, mobile, and web. Comfortable presenting design strategy to C-suite and 15-brand audiences.'],
+                ['06', 'AI-native prototyping', 'Figma AI workflows and full React prototypes built with AI agents in Cursor IDE — compressing design intent and engineering reality.'],
+              ].map(([num, title, desc]) => (
+                <Card key={num} className="rounded-none border-0 bg-slate-950 p-7 shadow-none">
+                  <p className="font-display text-sm text-slate-500">{num}</p>
+                  <h3 className="mt-3 text-base font-semibold text-white">{title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-400">{desc}</p>
                 </Card>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="leadership" className="py-20">
-          <div className="mx-auto max-w-5xl px-6">
-            <h2 className="font-display text-3xl text-white md:text-4xl">How I lead</h2>
-            <ul className="mt-10 grid gap-6 md:grid-cols-3">
-              {[
-                {
-                  h: 'Clarity first',
-                  b: 'Frame problems so teams disagree on the right things—not the basics.',
-                },
-                { h: 'Systems thinking', b: 'Design scales when patterns, not pages, carry the load.' },
-                { h: 'People over process', b: 'Hire and coach so great work is the default, not heroics.' },
-              ].map((x) => (
-                <li key={x.h} className="rounded-2xl border border-slate-800 p-6">
-                  <h3 className="font-semibold text-amber-500/90">{x.h}</h3>
-                  <p className="mt-2 text-sm text-slate-400 leading-relaxed">{x.b}</p>
-                </li>
-              ))}
-            </ul>
+        <section className="border-b border-slate-800/70 bg-slate-900/60 py-16">
+          <div className="mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-2">
+            <div>
+              <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-amber-500">Now · AI-native practice</p>
+              <h2 className="mt-4 font-display text-4xl leading-tight text-white">
+                Design practice,<br />
+                <em className="text-slate-400 not-italic">AI-augmented.</em>
+              </h2>
+            </div>
+            <div>
+              <p className="text-sm leading-relaxed text-slate-400">
+                I don&apos;t use AI to replace judgment — I use it to compress time. Figma AI tooling
+                for accelerated ideation, full React-driven prototypes built with AI agents in Cursor IDE.
+                The result: higher-fidelity proof-of-concepts, faster design-to-handoff cycles, and a
+                practice that stays ahead of where the industry is going.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {['Figma AI', 'Cursor IDE', 'React prototypes', 'AI agents', 'Design systems'].map((pill) => (
+                  <span key={pill} className="rounded-full border border-slate-600 px-3 py-1 text-xs text-slate-300">
+                    {pill}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
-        <section id="contact" className="border-t border-slate-800/80 py-20">
-          <div className="mx-auto max-w-5xl px-6 text-center">
-            <h2 className="font-display text-3xl text-white md:text-4xl">Let&apos;s talk</h2>
-            <p className="mx-auto mt-4 max-w-md text-slate-400">
-              Add your email or Calendly link here when you&apos;re ready.
-            </p>
-            <a
-              href="mailto:hello@example.com"
-              className="mt-8 inline-block rounded-full bg-white px-8 py-3 text-sm font-semibold text-slate-950 hover:bg-slate-200 transition-colors"
-            >
-              hello@example.com
-            </a>
+        <section id="work" className="border-b border-slate-800/70 py-20">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="mb-10 flex items-baseline justify-between">
+              <h2 className="font-display text-4xl text-white">Selected work</h2>
+              <Link
+                to="/work"
+                className="text-xs uppercase tracking-wider text-slate-500 hover:text-amber-500 transition-colors"
+              >
+                All case studies →
+              </Link>
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              {[
+                {
+                  tag: 'Smart Home · Platform · Hardware',
+                  title: 'Wink',
+                  desc: 'Founding designer to VP. Built the team, designed the platform, shipped 60+ products across 40+ brand partners. Hub 2 reduced setup from 30 to 7 minutes.',
+                  meta: '2013–2018 · Founding Designer → VP',
+                  href: '/work/wink',
+                  placeholder: false,
+                },
+                {
+                  tag: 'Placeholder · Case study',
+                  title: 'Lorem ipsum dolor',
+                  desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.',
+                  meta: 'TBD',
+                  href: '/work',
+                  placeholder: true,
+                },
+                {
+                  tag: 'Placeholder · Case study',
+                  title: 'Sit amet consectetur',
+                  desc: 'Sed posuere consectetur est at lobortis. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.',
+                  meta: 'TBD',
+                  href: '/work',
+                  placeholder: true,
+                },
+              ].map((w) => (
+                <Link key={w.title} to={w.href} className="group">
+                  <Card
+                    className={`h-full border-slate-800 bg-slate-900/70 p-8 transition-colors group-hover:border-slate-700 group-hover:bg-slate-900 ${
+                      w.placeholder ? 'opacity-80' : ''
+                    }`}
+                  >
+                    <p className="text-[10px] uppercase tracking-[0.1em] text-amber-500">{w.tag}</p>
+                    <h3 className="mt-3 font-display text-2xl leading-tight text-white">{w.title}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-slate-400">{w.desc}</p>
+                    <p className="mt-8 text-xs text-slate-500">{w.meta}</p>
+                    {w.placeholder ? (
+                      <p className="mt-4 text-xs font-medium uppercase tracking-wider text-slate-600">Coming soon</p>
+                    ) : null}
+                  </Card>
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-slate-800 py-8 text-center text-xs text-slate-600">
-        © {new Date().getFullYear()} — Portfolio
+      <footer id="contact" className="border-t border-slate-800 py-10">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-center md:flex-row md:text-left">
+          <span className="font-display text-2xl text-white">Jeff Bartenbach</span>
+          <p className="text-sm text-slate-400">
+            <a href="tel:2067347275" className="text-amber-500 hover:opacity-80">206.734.7275</a>
+            {' '}·{' '}
+            <a href="mailto:jbartenbach@gmail.com" className="text-amber-500 hover:opacity-80">jbartenbach@gmail.com</a>
+          </p>
+        </div>
       </footer>
     </div>
   )
