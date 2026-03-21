@@ -36,10 +36,10 @@ export default function PortfolioHome() {
     },
     {
       figure: (
-        <span className="inline-flex items-start gap-0">
+        <>
           <span className="text-white">85</span>
-          <sup className="ml-0.5 translate-y-0.5 text-[0.42em] font-bold leading-none text-amber-500">%</sup>
-        </span>
+          <span className="text-amber-500">%</span>
+        </>
       ),
       label: 'Reduction in customer service calls through design-led product improvement',
     },
@@ -127,11 +127,13 @@ export default function PortfolioHome() {
           </div>
         </section>
 
-        <section className="border-y border-slate-800/70">
-          <div className="mx-auto grid max-w-5xl gap-px bg-slate-800/70 md:grid-cols-4">
+        <section className="border-y border-[#4B505A] bg-[#1E2835]">
+          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-6 py-10 md:grid-cols-4 md:gap-6">
             {stats.map((s) => (
-              <div key={s.label} className="bg-slate-900/70 p-8">
-                <div className="font-sans text-5xl font-bold leading-none tracking-tight">{s.figure}</div>
+              <div key={s.label}>
+                <div className="font-sans text-4xl font-light leading-none tracking-tight">
+                  {s.figure}
+                </div>
                 <p className="mt-3 text-sm text-slate-400">{s.label}</p>
               </div>
             ))}
@@ -141,12 +143,12 @@ export default function PortfolioHome() {
         <section id="about" className="border-b border-slate-800/70 py-20">
           <div className="mx-auto grid max-w-5xl gap-10 px-6 lg:grid-cols-[260px_1fr]">
             <div>
-              <p className={sectionLabelClass}>Product &amp; UX Design Leader</p>
+              <p className={sectionLabelClass}>What I do</p>
               <h2 className="mt-4 font-display text-3xl leading-tight text-white">
                 Design leadership at <em className="text-slate-400 not-italic">every layer</em> of the stack.
               </h2>
             </div>
-            <div className="grid gap-px bg-slate-800/70 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {[
                 ['01', 'Design leadership', 'Built teams from 0 to 7. Established hiring, critique culture, and cross-functional practice that outlasts any single project.'],
                 ['02', '0-to-1 product', 'Founded and shipped first versions of Wink, Maximus Health platform, and others — from concept through engineering handoff.'],
@@ -155,10 +157,10 @@ export default function PortfolioHome() {
                 ['05', 'Cross-functional craft', 'Fluent across hardware, software, mobile, and web. Comfortable presenting design strategy to C-suite and 15-brand audiences.'],
                 ['06', 'AI-native prototyping', 'Figma AI workflows and full React prototypes built with AI agents in Cursor IDE — compressing design intent and engineering reality.'],
               ].map(([num, title, desc]) => (
-                <Card key={num} className="rounded-none border-0 bg-slate-900/70 p-7 shadow-none">
-                  <p className="font-sans text-lg font-semibold tabular-nums text-slate-500">{num}</p>
-                  <h3 className="mt-3 text-base font-semibold text-white">{title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-400">{desc}</p>
+                <Card key={num} className="rounded-[4px] border-0 bg-[#161B28] p-7 shadow-none">
+                  <p className="font-sans text-lg font-semibold tabular-nums leading-none text-slate-500">{num}</p>
+                  <h3 className="mt-2 text-base font-semibold leading-snug text-white">{title}</h3>
+                  <p className="mt-1.5 text-sm leading-snug text-slate-400">{desc}</p>
                 </Card>
               ))}
             </div>
@@ -168,7 +170,7 @@ export default function PortfolioHome() {
         <section className="border-b border-slate-800/70 bg-slate-900/60 py-16">
           <div className="mx-auto grid max-w-5xl gap-12 px-6 lg:grid-cols-2">
             <div>
-              <p className={sectionLabelClass}>Product &amp; UX Design Leader</p>
+              <p className={sectionLabelClass}>NOW · AI-NATIVE PRACTICE</p>
               <h2 className="mt-4 font-display text-3xl leading-tight text-white">
                 Design practice,<br />
                 <em className="text-slate-400 not-italic">AI-augmented.</em>
@@ -235,7 +237,7 @@ export default function PortfolioHome() {
               ].map((w) => (
                 <Link key={w.title} to={w.href} className="group">
                   <Card
-                    className={`h-full rounded-2xl border border-slate-700 bg-slate-900 p-8 shadow-none transition-colors group-hover:border-amber-400/55 group-hover:bg-slate-800 ${
+                    className={`h-full rounded-2xl border-[1pt] border-solid border-[#3B3F4A] bg-[#161B28] p-8 shadow-none transition-colors group-hover:border-[#4B505A] group-hover:bg-[#1E2835] ${
                       w.placeholder ? 'opacity-80' : ''
                     }`}
                   >
