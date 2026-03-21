@@ -1,10 +1,53 @@
 import { Link } from 'react-router-dom'
 import Card from '../components/ui/Card'
 
+const sectionLabelClass =
+  'text-sm font-medium uppercase tracking-widest text-amber-500/90'
+
 export default function PortfolioHome() {
+  const stats = [
+    {
+      figure: (
+        <>
+          <span className="text-white">20</span>
+          <span className="text-amber-500">+</span>
+        </>
+      ),
+      label: 'Years of craft across hardware, software, health, and consumer tech',
+    },
+    {
+      figure: (
+        <>
+          <span className="text-white">0</span>
+          <span className="text-amber-500">→</span>
+          <span className="text-white">1M</span>
+        </>
+      ),
+      label: 'Founded design teams and scaled products to over a million users',
+    },
+    {
+      figure: (
+        <>
+          <span className="text-white">3</span>
+          <span className="text-amber-500">x</span>
+        </>
+      ),
+      label: 'Average order value lift while improving conversion and retention',
+    },
+    {
+      figure: (
+        <span className="inline-flex items-start gap-0">
+          <span className="text-white">85</span>
+          <sup className="ml-0.5 translate-y-0.5 text-[0.42em] font-bold leading-none text-amber-500">%</sup>
+        </span>
+      ),
+      label: 'Reduction in customer service calls through design-led product improvement',
+    },
+  ] as const
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="border-b border-slate-800/80">
+      <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
           <span className="font-display text-2xl tracking-tight text-white">Jeff Bartenbach</span>
           <nav className="flex gap-8 text-sm font-medium text-slate-400">
@@ -56,9 +99,7 @@ export default function PortfolioHome() {
           `}</style>
 
           <div className="relative mx-auto max-w-5xl px-6 py-20 md:py-28">
-          <p className="mb-4 text-sm font-medium uppercase tracking-widest text-amber-500/90">
-            Product &amp; UX Design Leader
-          </p>
+          <p className={`mb-4 ${sectionLabelClass}`}>Product &amp; UX Design Leader</p>
           <h1 className="font-display text-4xl leading-tight text-white md:text-6xl md:leading-[1.08]">
             I shape products people trust—
             <span className="text-slate-500">strategy, craft, and teams.</span>
@@ -87,29 +128,20 @@ export default function PortfolioHome() {
         </section>
 
         <section className="border-y border-slate-800/70">
-          <div className="mx-auto grid max-w-6xl gap-px bg-slate-800/70 md:grid-cols-4">
-            {[
-              { n: '20+', l: 'Years of craft across hardware, software, health, and consumer tech' },
-              { n: '0→1M', l: 'Founded design teams and scaled products to over a million users' },
-              { n: '3×', l: 'Average order value lift while improving conversion and retention' },
-              { n: '85%', l: 'Reduction in customer service calls through design-led product improvement' },
-            ].map((s) => (
-              <div key={s.n} className="bg-slate-950 p-8 hover:bg-slate-900/70 transition-colors">
-                <div className="font-display text-5xl leading-none text-white">
-                  {s.n.replace('+', '')}
-                  {s.n.includes('+') ? <em className="text-amber-500 not-italic">+</em> : null}
-                  {s.n.includes('×') ? <em className="text-amber-500 not-italic">×</em> : null}
-                </div>
-                <p className="mt-3 text-sm text-slate-400">{s.l}</p>
+          <div className="mx-auto grid max-w-5xl gap-px bg-slate-800/70 md:grid-cols-4">
+            {stats.map((s) => (
+              <div key={s.label} className="bg-slate-900/70 p-8">
+                <div className="font-sans text-5xl font-bold leading-none tracking-tight">{s.figure}</div>
+                <p className="mt-3 text-sm text-slate-400">{s.label}</p>
               </div>
             ))}
           </div>
         </section>
 
         <section id="about" className="border-b border-slate-800/70 py-20">
-          <div className="mx-auto grid max-w-6xl gap-10 px-6 lg:grid-cols-[260px_1fr]">
+          <div className="mx-auto grid max-w-5xl gap-10 px-6 lg:grid-cols-[260px_1fr]">
             <div>
-              <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-slate-500">What I do</p>
+              <p className={sectionLabelClass}>Product &amp; UX Design Leader</p>
               <h2 className="mt-4 font-display text-3xl leading-tight text-white">
                 Design leadership at <em className="text-slate-400 not-italic">every layer</em> of the stack.
               </h2>
@@ -123,8 +155,8 @@ export default function PortfolioHome() {
                 ['05', 'Cross-functional craft', 'Fluent across hardware, software, mobile, and web. Comfortable presenting design strategy to C-suite and 15-brand audiences.'],
                 ['06', 'AI-native prototyping', 'Figma AI workflows and full React prototypes built with AI agents in Cursor IDE — compressing design intent and engineering reality.'],
               ].map(([num, title, desc]) => (
-                <Card key={num} className="rounded-none border-0 bg-slate-950 p-7 shadow-none">
-                  <p className="font-display text-sm text-slate-500">{num}</p>
+                <Card key={num} className="rounded-none border-0 bg-slate-900/70 p-7 shadow-none">
+                  <p className="font-sans text-lg font-semibold tabular-nums text-slate-500">{num}</p>
                   <h3 className="mt-3 text-base font-semibold text-white">{title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-slate-400">{desc}</p>
                 </Card>
@@ -134,10 +166,10 @@ export default function PortfolioHome() {
         </section>
 
         <section className="border-b border-slate-800/70 bg-slate-900/60 py-16">
-          <div className="mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-2">
+          <div className="mx-auto grid max-w-5xl gap-12 px-6 lg:grid-cols-2">
             <div>
-              <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-amber-500">Now · AI-native practice</p>
-              <h2 className="mt-4 font-display text-4xl leading-tight text-white">
+              <p className={sectionLabelClass}>Product &amp; UX Design Leader</p>
+              <h2 className="mt-4 font-display text-3xl leading-tight text-white">
                 Design practice,<br />
                 <em className="text-slate-400 not-italic">AI-augmented.</em>
               </h2>
@@ -161,12 +193,15 @@ export default function PortfolioHome() {
         </section>
 
         <section id="work" className="border-b border-slate-800/70 py-20">
-          <div className="mx-auto max-w-6xl px-6">
-            <div className="mb-10 flex items-baseline justify-between">
-              <h2 className="font-display text-4xl text-white">Selected work</h2>
+          <div className="mx-auto max-w-5xl px-6">
+            <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className={sectionLabelClass}>Case studies</p>
+                <h2 className="mt-2 font-display text-3xl leading-tight text-white">Selected Work</h2>
+              </div>
               <Link
                 to="/work"
-                className="text-xs uppercase tracking-wider text-slate-500 hover:text-amber-500 transition-colors"
+                className="shrink-0 text-xs font-medium uppercase tracking-wider text-slate-500 hover:text-amber-500 transition-colors"
               >
                 All case studies →
               </Link>
@@ -200,12 +235,12 @@ export default function PortfolioHome() {
               ].map((w) => (
                 <Link key={w.title} to={w.href} className="group">
                   <Card
-                    className={`h-full border-slate-800 bg-slate-900/70 p-8 transition-colors group-hover:border-slate-700 group-hover:bg-slate-900 ${
+                    className={`h-full rounded-2xl border border-slate-700 bg-slate-900 p-8 shadow-none transition-colors group-hover:border-amber-400/55 group-hover:bg-slate-800 ${
                       w.placeholder ? 'opacity-80' : ''
                     }`}
                   >
                     <p className="text-[10px] uppercase tracking-[0.1em] text-amber-500">{w.tag}</p>
-                    <h3 className="mt-3 font-display text-2xl leading-tight text-white">{w.title}</h3>
+                    <h3 className="mt-3 text-2xl font-semibold leading-tight text-white">{w.title}</h3>
                     <p className="mt-3 text-sm leading-relaxed text-slate-400">{w.desc}</p>
                     <p className="mt-8 text-xs text-slate-500">{w.meta}</p>
                     {w.placeholder ? (
@@ -220,7 +255,7 @@ export default function PortfolioHome() {
       </main>
 
       <footer id="contact" className="border-t border-slate-800 py-10">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-center md:flex-row md:text-left">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-6 text-center md:flex-row md:text-left">
           <span className="font-display text-2xl text-white">Jeff Bartenbach</span>
           <p className="text-sm text-slate-400">
             <a href="tel:2067347275" className="text-amber-500 hover:opacity-80">206.734.7275</a>

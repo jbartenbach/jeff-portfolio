@@ -10,7 +10,7 @@ type Props = {
 export default function PublicSiteChrome({ children }: Props) {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="border-b border-slate-800/80">
+      <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
           <Link to="/" className="font-display text-2xl tracking-tight text-white hover:text-amber-100 transition-colors">
             Jeff Bartenbach
@@ -32,7 +32,7 @@ export default function PublicSiteChrome({ children }: Props) {
       {children}
 
       <footer id="contact" className="border-t border-slate-800 py-10">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-center md:flex-row md:text-left">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-6 text-center md:flex-row md:text-left">
           <span className="font-display text-2xl text-white">Jeff Bartenbach</span>
           <p className="text-sm text-slate-400">
             <a href="tel:2067347275" className="text-amber-500 hover:opacity-80">
