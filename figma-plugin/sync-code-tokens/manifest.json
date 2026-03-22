@@ -1,0 +1,12 @@
+{
+  "name": "Jeff Portfolio — Sync variables from JSON",
+  "id": "com.jeffportfolio.sync-code-tokens",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}

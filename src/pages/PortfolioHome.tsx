@@ -127,7 +127,7 @@ export default function PortfolioHome() {
           </div>
         </section>
 
-        <section className="border-y border-[#4B505A] bg-[#1E2835]">
+        <section className="border-y border-slate-800/70 bg-slate-900">
           <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-6 py-10 md:grid-cols-4 md:gap-6">
             {stats.map((s) => (
               <div key={s.label}>

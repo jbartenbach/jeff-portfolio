@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font: 12px/1.4 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 12px;
+        color: var(--figma-color-text, #e2e8f0);
+        background: var(--figma-color-bg, #0f172a);
+      }
+      h1 {
+        font-size: 13px;
+        font-weight: 600;
+        margin: 0 0 8px;
+        color: var(--figma-color-text, #f8fafc);
+      }
+      p {
+        margin: 0 0 10px;
+        color: var(--figma-color-text-secondary, #94a3b8);
+      }
+      textarea {
+        width: 100%;
+        height: 220px;
+        font: 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+        padding: 8px;
+        border: 1px solid var(--figma-color-border, #334155);
+        border-radius: 6px;
+        background: var(--figma-color-bg-secondary, #1e293b);
+        color: var(--figma-color-text, #e2e8f0);
+        resize: vertical;
+      }
+      textarea:focus {
+        outline: none;
+        border-color: var(--figma-color-border-selected, #f59e0b);
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        align-items: center;
+      }
+      button {
+        font: 600 12px inherit;
+        padding: 8px 14px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        background: var(--figma-color-bg-brand, #f59e0b);
+        color: var(--figma-color-text-onbrand, #0f172a);
+      }
+      button:hover {
+        opacity: 0.92;
+      }
+      button.secondary {
+        background: var(--figma-color-bg-secondary, #334155);
+        color: var(--figma-color-text, #f1f5f9);
+      }
+      button.secondary:hover {
+        opacity: 0.92;
+      }
+      #log {
+        margin-top: 10px;
+        font: 11px ui-monospace, monospace;
+        white-space: pre-wrap;
+        color: #86efac;
+        max-height: 120px;
+        overflow: auto;
+      }
+      #log.err {
+        color: #fca5a5;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sync from figma-variables.json</h1>
+    <p>
+      Paste the contents of <code>design/figma-variables.json</code> (run
+      <code>npm run design:sync</code> in the repo first). Creates or updates variables in collection
+      <strong>Jeff Portfolio — Code</strong>.
+    </p>
+    <textarea id="json" placeholder='{ "radius": { "md": { "$type": "string", "$value": "0.75rem" } }, ... }'></textarea>
+    <div class="row">
+      <button type="button" id="apply">Apply / update variables</button>
+      <button type="button" id="cancel" class="secondary">Cancel</button>
+    </div>
+    <div id="log"></div>
+    <script>
+      const jsonEl = document.getElementById('json')
+      const logEl = document.getElementById('log')
+      function log(msg, isErr) {
+        logEl.className = isErr ? 'err' : ''
+        logEl.textContent = msg
+      }
+      document.getElementById('apply').onclick = () => {
+        const raw = jsonEl.value.trim()
+        if (!raw) {
+          log('Paste JSON first.', true)
+          return
+        }
+        log('Working…')
+        parent.postMessage({ pluginMessage: { type: 'apply', raw } }, '*')
+      }
+      document.getElementById('cancel').onclick = () => {
+        parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
+      }
+      onmessage = (event) => {
+        const msg = event.data.pluginMessage
+        if (!msg) return
+        if (msg.type === 'result') log(msg.text, !!msg.error)
+      }
+    </script>
+  </body>
+</html>
