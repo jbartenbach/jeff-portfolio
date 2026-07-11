@@ -7,16 +7,18 @@ import { caseStudyList } from '../content/caseStudies'
 function CaseStudyImage({ title, imageSrc, imageAlt }: { title: string; imageSrc?: string; imageAlt?: string }) {
   if (imageSrc) {
     return (
-      <img
-        src={imageSrc}
-        alt={imageAlt ?? `${title} case study`}
-        className="h-full w-full object-cover"
-      />
+      <div className="relative min-h-[200px] w-full md:absolute md:inset-0 md:min-h-0">
+        <img
+          src={imageSrc}
+          alt={imageAlt ?? `${title} case study`}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      </div>
     )
   }
 
   return (
-    <div className="flex h-full min-h-[200px] w-full items-center justify-center bg-slate-800/80 text-sm text-slate-500 md:min-h-[240px]">
+    <div className="flex min-h-[200px] w-full items-center justify-center bg-slate-800/80 text-sm text-slate-500 md:absolute md:inset-0 md:min-h-0">
       Image placeholder
     </div>
   )
@@ -32,14 +34,14 @@ export default function WorkIndex() {
             {caseStudyList.map((item) => {
               const card = (
                 <Card
-                  className={`overflow-hidden rounded-2xl border-[1pt] border-solid !border-[#4B505A] !bg-[#0F172A] p-0 shadow-none transition-colors ${
+                  className={`overflow-hidden rounded-2xl border-[1pt] border-solid !border-[#4B505A] !bg-[#0F172A] !p-0 shadow-none transition-colors ${
                     item.published
                       ? 'group-hover:border-2 group-hover:!border-white group-hover:!bg-[#1E2835]'
                       : 'opacity-80'
                   }`}
                 >
-                  <div className="flex flex-col md:flex-row">
-                    <div className="md:w-[42%] md:shrink-0 md:border-r md:border-slate-800/80">
+                  <div className="flex flex-col md:flex-row md:items-stretch">
+                    <div className="relative md:w-[42%] md:shrink-0 md:border-r md:border-slate-800/80 md:min-h-[240px]">
                       <CaseStudyImage title={item.title} imageSrc={item.imageSrc} imageAlt={item.imageAlt} />
                     </div>
                     <div className="flex flex-1 flex-col p-8 md:p-10">

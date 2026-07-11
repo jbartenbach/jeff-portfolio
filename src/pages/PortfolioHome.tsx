@@ -2,7 +2,10 @@ import { Link } from 'react-router-dom'
 import Card from '../components/ui/Card'
 import PublicSiteChrome from '../components/case-study/PublicSiteChrome'
 import { AIPracticeSection, WhatIDoSection } from '../components/site/AboutSections'
+import { caseStudyList } from '../content/caseStudies'
 import { sectionLabelClass } from '../content/siteContent'
+
+const featuredCaseStudies = caseStudyList.slice(0, 3)
 
 export default function PortfolioHome() {
   const stats = [
@@ -140,45 +143,26 @@ export default function PortfolioHome() {
               </Link>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
-              {[
-                {
-                  tag: 'Smart Home · Platform · Hardware',
-                  title: 'Wink',
-                  desc: 'Founding designer to VP. Built the team, designed the platform, shipped 60+ products across 40+ brand partners. Hub 2 reduced setup from 30 to 7 minutes.',
-                  meta: '2013–2018 · Founding Designer → VP',
-                  href: '/work/wink',
-                  placeholder: false,
-                },
-                {
-                  tag: 'E-commerce subscription',
-                  title: 'Daily Harvest',
-                  desc: 'Subscription UX and account flows for a scaled consumer health brand, focused on reducing churn and improving retention moments.',
-                  meta: 'Highlight',
-                  href: '/work',
-                  placeholder: true,
-                },
-                {
-                  tag: 'Personalized medicine',
-                  title: 'Maximus',
-                  desc: 'Product architecture and core flows for a fast-growing health platform, spanning onboarding, care plans, and lifecycle touchpoints.',
-                  meta: 'Highlight',
-                  href: '/work',
-                  placeholder: true,
-                },
-              ].map((w) => (
-                <Link key={w.title} to={w.href} className="group">
-                  <Card
-                    className={`h-full rounded-2xl border-[1pt] border-solid !border-[#4B505A] !bg-[#0F172A] p-8 shadow-none transition-colors group-hover:border-2 group-hover:!border-white group-hover:!bg-[#1E2835] ${
-                      w.placeholder ? 'opacity-80' : ''
-                    }`}
-                  >
-                    <p className="text-[10px] uppercase tracking-[0.1em] text-amber-500">{w.tag}</p>
-                    <h3 className="mt-3 text-2xl font-semibold leading-tight text-white">{w.title}</h3>
-                    <p className="mt-3 text-sm leading-relaxed text-slate-400">{w.desc}</p>
-                    <p className="mt-8 text-xs text-slate-500">{w.meta}</p>
-                    {w.placeholder ? (
-                      <p className="mt-4 text-xs font-medium uppercase tracking-wider text-slate-600">Coming soon</p>
-                    ) : null}
+              {featuredCaseStudies.map((study) => (
+                <Link key={study.slug} to={`/work/${study.slug}`} className="group">
+                  <Card className="h-full overflow-hidden rounded-2xl border-[1pt] border-solid !border-[#4B505A] !bg-[#0F172A] !p-0 shadow-none transition-colors group-hover:border-2 group-hover:!border-white group-hover:!bg-[#1E2835]">
+                    <div className="relative aspect-[8/5] w-full bg-slate-800">
+                      {study.imageSrc ? (
+                        <img
+                          src={study.imageSrc}
+                          alt={study.imageAlt ?? `${study.title} case study`}
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-sm text-slate-500">
+                          Image placeholder
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-6">
+                      <p className="text-[10px] uppercase tracking-[0.1em] text-amber-500">{study.tag}</p>
+                      <h3 className="mt-3 text-2xl font-semibold leading-tight text-white">{study.title}</h3>
+                    </div>
                   </Card>
                 </Link>
               ))}
