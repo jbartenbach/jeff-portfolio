@@ -26,6 +26,9 @@ export type CaseStudyListItem = {
   /** Short line for cards / index */
   blurb: string
   meta: string
+  /** Optional thumbnail for work index */
+  imageSrc?: string
+  imageAlt?: string
   /** If false, card links to # and shows as placeholder */
   published: boolean
 }
@@ -42,6 +45,8 @@ export type CaseStudy = {
   sections: CaseStudySection[]
   /** Optional hero art-direction notes (below metrics strip) */
   heroVisualSuggestions?: string[]
+  /** Renders a minimal coming-soon page instead of full case study layout */
+  placeholder?: boolean
 }
 
 export const caseStudyList: CaseStudyListItem[] = [
@@ -52,25 +57,42 @@ export const caseStudyList: CaseStudyListItem[] = [
     blurb:
       'Founding designer to VP. Built the team, designed the platform, shipped 60+ products across 40+ brand partners. Hub 2 reduced setup from 30 to 7 minutes.',
     meta: '2013–2018 · Founding Designer → VP',
+    imageSrc: '/work/wink.png',
+    imageAlt: 'Wink smart home app on three iPhones showing home, shortcuts, and robots screens',
     published: true,
   },
   {
-    slug: 'project-alpha',
-    title: 'Lorem ipsum dolor',
-    tag: 'Placeholder · Case study',
+    slug: 'maximus-health-data',
+    title: 'Maximus health data',
+    tag: 'Personalized medicine',
     blurb:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    meta: 'TBD',
-    published: false,
+      'Made health data understandable and actionable. Simplified complex biomarker data. Designed for trends and progress. Introduced AI-driven prototyping.',
+    meta: '2023–2026 · Principal Product Designer',
+    imageSrc: '/work/maximus-health-data.png',
+    imageAlt: 'Maximus at-home health kit with lab results app showing Maximus score and cardiovascular risk',
+    published: true,
   },
   {
-    slug: 'project-beta',
-    title: 'Sit amet consectetur',
-    tag: 'Placeholder · Case study',
+    slug: 'daily-harvest',
+    title: 'Daily Harvest',
+    tag: 'e-commerce subscription',
     blurb:
-      'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    meta: 'TBD',
-    published: false,
+      'Reframed the subscription experience around how people actually shop. Increased conversion by 25%. Introduced flexible purchasing model. Simplified product + pricing complexity.',
+    meta: '2019–2022 · Principal Product Designer',
+    imageSrc: '/work/daily-harvest.png',
+    imageAlt: 'Daily Harvest mobile site on iPhone showing hero and product offerings',
+    published: true,
+  },
+  {
+    slug: 'bombardier',
+    title: 'Bombardier',
+    tag: 'Private jet experience',
+    blurb:
+      'Designed a multi-surface cabin experience. Created unified system across hardware + software. Introduced patented interaction model. Designed for long-term relevance.',
+    meta: '2013 · Interaction Design Lead',
+    imageSrc: '/work/bombardier.png',
+    imageAlt: 'Bombardier private jet cabin with media and cabin control tablet and tactile dial',
+    published: true,
   },
 ]
 
@@ -277,6 +299,42 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
         ],
       },
     ],
+  },
+  'maximus-health-data': {
+    slug: 'maximus-health-data',
+    title: 'Maximus health data',
+    subtitle: 'Making health data understandable and actionable',
+    tag: 'Personalized medicine',
+    dek:
+      'Made health data understandable and actionable. Simplified complex biomarker data. Designed for trends and progress. Introduced AI-driven prototyping.',
+    meta: [{ label: 'Role', value: '2023–2026 · Principal Product Designer' }],
+    summary: [],
+    sections: [],
+    placeholder: true,
+  },
+  'daily-harvest': {
+    slug: 'daily-harvest',
+    title: 'Daily Harvest',
+    subtitle: 'Reframing subscription around how people actually shop',
+    tag: 'e-commerce subscription',
+    dek:
+      'Reframed the subscription experience around how people actually shop. Increased conversion by 25%. Introduced flexible purchasing model. Simplified product + pricing complexity.',
+    meta: [{ label: 'Role', value: '2019–2022 · Principal Product Designer' }],
+    summary: [],
+    sections: [],
+    placeholder: true,
+  },
+  bombardier: {
+    slug: 'bombardier',
+    title: 'Bombardier',
+    subtitle: 'A multi-surface private jet cabin experience',
+    tag: 'Private jet experience',
+    dek:
+      'Designed a multi-surface cabin experience. Created unified system across hardware + software. Introduced patented interaction model. Designed for long-term relevance.',
+    meta: [{ label: 'Role', value: '2013 · Interaction Design Lead' }],
+    summary: [],
+    sections: [],
+    placeholder: true,
   },
 }
 

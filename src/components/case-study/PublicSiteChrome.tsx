@@ -16,13 +16,16 @@ export default function PublicSiteChrome({ children }: Props) {
             Jeff Bartenbach
           </Link>
           <nav className="flex gap-8 text-sm font-medium text-slate-400">
-            <Link to="/#work" className="hover:text-white transition-colors">
+            <Link to="/" className="hover:text-white transition-colors">
+              Home
+            </Link>
+            <Link to="/work" className="hover:text-white transition-colors">
               Work
             </Link>
-            <Link to="/#about" className="hover:text-white transition-colors">
+            <Link to="/about" className="hover:text-white transition-colors">
               About
             </Link>
-            <Link to="/#contact" className="hover:text-white transition-colors">
+            <Link to="/contact" className="hover:text-white transition-colors">
               Contact
             </Link>
           </nav>
@@ -31,7 +34,7 @@ export default function PublicSiteChrome({ children }: Props) {
 
       {children}
 
-      <footer id="contact" className="border-t border-slate-800 py-10">
+      <footer className="border-t border-slate-800 py-10">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-6 text-center md:flex-row md:text-left">
           <span className="font-display text-2xl text-white">Jeff Bartenbach</span>
           <p className="text-sm text-slate-400">

@@ -1,57 +1,75 @@
 import { Link } from 'react-router-dom'
 import Card from '../components/ui/Card'
 import PublicSiteChrome from '../components/case-study/PublicSiteChrome'
+import PageHeader from '../components/site/PageHeader'
 import { caseStudyList } from '../content/caseStudies'
+
+function CaseStudyImage({ title, imageSrc, imageAlt }: { title: string; imageSrc?: string; imageAlt?: string }) {
+  if (imageSrc) {
+    return (
+      <img
+        src={imageSrc}
+        alt={imageAlt ?? `${title} case study`}
+        className="h-full w-full object-cover"
+      />
+    )
+  }
+
+  return (
+    <div className="flex h-full min-h-[200px] w-full items-center justify-center bg-slate-800/80 text-sm text-slate-500 md:min-h-[240px]">
+      Image placeholder
+    </div>
+  )
+}
 
 export default function WorkIndex() {
   return (
     <PublicSiteChrome>
-      <main className="border-b border-slate-800/70 py-16 md:py-24">
-        <div className="mx-auto max-w-6xl px-6">
-          <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-amber-500">Case studies</p>
-          <h1 className="mt-4 font-display text-4xl text-white md:text-5xl">Selected work</h1>
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-slate-400">
-            Deep dives into product strategy, craft, and outcomes. More studies are added as they’re published.
-          </p>
-
-          <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <PageHeader eyebrow="Work" title="Case studies" bordered={false} compact />
+      <main className="border-b border-slate-800/70 pb-20 pt-2">
+        <div className="mx-auto max-w-5xl px-6">
+          <div className="flex flex-col gap-6">
             {caseStudyList.map((item) => {
-              const to = item.published ? `/work/${item.slug}` : '#'
-              const inner = (
+              const card = (
                 <Card
-                  className={`h-full border-slate-800 bg-slate-900/70 p-8 transition-colors ${
+                  className={`overflow-hidden rounded-2xl border-[1pt] border-solid !border-[#4B505A] !bg-[#0F172A] p-0 shadow-none transition-colors ${
                     item.published
-                      ? 'group-hover:border-slate-700 group-hover:bg-slate-900'
+                      ? 'group-hover:border-2 group-hover:!border-white group-hover:!bg-[#1E2835]'
                       : 'opacity-80'
                   }`}
                 >
-                  <p className="text-[10px] uppercase tracking-[0.1em] text-amber-500">{item.tag}</p>
-                  <h2 className="mt-3 font-display text-2xl leading-tight text-white">{item.title}</h2>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-400">{item.blurb}</p>
-                  <p className="mt-8 text-xs text-slate-500">{item.meta}</p>
-                  {!item.published && (
-                    <p className="mt-4 text-xs font-medium uppercase tracking-wider text-slate-600">Coming soon</p>
-                  )}
+                  <div className="flex flex-col md:flex-row">
+                    <div className="md:w-[42%] md:shrink-0 md:border-r md:border-slate-800/80">
+                      <CaseStudyImage title={item.title} imageSrc={item.imageSrc} imageAlt={item.imageAlt} />
+                    </div>
+                    <div className="flex flex-1 flex-col p-8 md:p-10">
+                      <p className="text-[10px] uppercase tracking-[0.1em] text-amber-500">{item.tag}</p>
+                      <h2 className="mt-3 font-display text-2xl leading-tight text-white md:text-3xl">{item.title}</h2>
+                      <p className="mt-3 text-sm leading-relaxed text-slate-400 md:text-base">{item.blurb}</p>
+                      <p className="mt-6 text-xs text-slate-500">{item.meta}</p>
+                      {item.published ? (
+                        <span className="mt-8 self-end text-sm font-medium text-amber-500 transition-colors group-hover:text-amber-400">
+                          View case study →
+                        </span>
+                      ) : (
+                        <p className="mt-8 text-xs font-medium uppercase tracking-wider text-slate-600">Coming soon</p>
+                      )}
+                    </div>
+                  </div>
                 </Card>
               )
 
               return item.published ? (
-                <Link key={item.slug} to={to} className="group block">
-                  {inner}
+                <Link key={item.slug} to={`/work/${item.slug}`} className="group block">
+                  {card}
                 </Link>
               ) : (
                 <div key={item.slug} className="group block cursor-not-allowed">
-                  {inner}
+                  {card}
                 </div>
               )
             })}
           </div>
-
-          <p className="mt-12 text-center text-sm text-slate-500">
-            <Link to="/" className="text-amber-500 hover:underline">
-              ← Back to homepage
-            </Link>
-          </p>
         </div>
       </main>
     </PublicSiteChrome>
