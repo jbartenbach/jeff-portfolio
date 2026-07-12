@@ -22,9 +22,6 @@ export default function PublicSiteChrome({ children }: Props) {
             <Link to="/work" className="hover:text-white transition-colors">
               Work
             </Link>
-            <Link to="/about" className="hover:text-white transition-colors">
-              About
-            </Link>
             <Link to="/contact" className="hover:text-white transition-colors">
               Contact
             </Link>

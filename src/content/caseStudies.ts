@@ -8,16 +8,34 @@ export type CaseStudyMetaRow = { label: string; value: string }
 export type CaseStudySection = {
   /** Stable id for anchors / future CMS */
   id: string
+  /** Uppercase section label shown above the title */
+  eyebrow?: string
   title: string
   /** Paragraphs (each rendered as <p>) */
   paragraphs: string[]
   /** Optional bullet list under the section */
   bullets?: string[]
+  /** Optional labeled bullet groups (e.g. focus / results lists) */
+  bulletGroups?: Array<{ label?: string; items: string[] }>
+  /** Paragraphs rendered after bullets and bullet groups */
+  closingParagraphs?: string[]
+  /** Real section images (prefer over visualSuggestions when present) */
+  images?: Array<{ src: string; alt: string }>
   /** Art direction / layout notes for a future visual pass */
   visualSuggestions?: string[]
 }
 
-export type CaseStudySummaryItem = { label: string; value: string }
+export type CaseStudySummaryItem = {
+  label?: string
+  value: string
+  supporting?: string
+}
+
+export type CaseStudyClosingColumn = {
+  eyebrow: string
+  title: string
+  paragraphs: string[]
+}
 
 export type CaseStudyListItem = {
   slug: string
@@ -43,6 +61,11 @@ export type CaseStudy = {
   meta: CaseStudyMetaRow[]
   summary: CaseStudySummaryItem[]
   sections: CaseStudySection[]
+  /** Optional hero image (work index thumbnail reused when omitted) */
+  heroImageSrc?: string
+  heroImageAlt?: string
+  /** Optional two-column text block before the footer */
+  closingColumns?: CaseStudyClosingColumn[]
   /** Optional hero art-direction notes (below metrics strip) */
   heroVisualSuggestions?: string[]
   /** Renders a minimal coming-soon page instead of full case study layout */
@@ -100,7 +123,7 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
   wink: {
     slug: 'wink',
     title: 'Wink',
-    subtitle: 'Simplifying the Smart Home for Everyone',
+    subtitle: 'Simplifying the smart home for everyone',
     tag: 'Smart Home · Platform · Hardware',
     dek:
       'Designed a unified platform to control 60+ connected devices through a single, intuitive experience — helping bring smart home technology to the mainstream.',
@@ -111,42 +134,40 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
       { label: 'Scope', value: 'Mobile app, Wink Hub, partner ecosystem' },
     ],
     summary: [
-      { label: 'Scale', value: '1M+ users · 40+ partners' },
-      { label: 'Setup time', value: '30 → 7 min' },
-      { label: 'Support calls', value: '−85%' },
-      { label: 'Industry impact', value: 'Early connected-home UX model' },
+      { label: 'Users', value: '1M+', supporting: 'Designed from scratch and scaled to over 1 million users' },
+      {
+        label: 'Partners',
+        value: '40+',
+        supporting: 'First platform to work with Alexa, Google Home, Nest, and Philips Hue',
+      },
+      {
+        label: 'Setup time',
+        value: '30 → 7 mins',
+        supporting: 'Worked with engineering to make setup feel like magic — Plug it in. See it in the app.',
+      },
+      { label: 'Support calls', value: '↓ 7x', supporting: '7x fewer support calls after new hardware and software launch' },
     ],
-    heroVisualSuggestions: [
-      'Clean collage of app screens + hub hardware',
-      'Optional: subtle animation showing multiple devices → one interface',
-    ],
+    heroImageSrc: '/work/wink-hero.png',
+    heroImageAlt: 'Wink smart home app on iPhone showing Lights, Blinds, Smoke Alarm, and Locks controls',
     sections: [
       {
         id: 'problem',
-        title: 'The problem',
+        eyebrow: 'The Problem to solve',
+        title: 'Make the smart home accessible beyond the tech-savvy and wealthy',
         paragraphs: [
           'Smart home technology was fragmented, technical, and largely inaccessible to everyday users.',
+          'The experience of connecting products across brands required either technical expertise or expensive professional installation.',
+          'The challenge wasn\'t just controlling devices — it was creating a system where multiple products could feel like one.',
           'Each device:',
         ],
         bullets: ['Had its own app', 'Its own setup process', 'Its own logic'],
-        visualSuggestions: [
-          'Diagram of fragmented ecosystem (multiple apps/devices)',
-          'Screens from different brand apps (or representative UI)',
-          '“Before” system chaos visual',
-        ],
-      },
-      {
-        id: 'problem-body',
-        title: '',
-        paragraphs: [
-          'The experience of connecting products across brands required either technical expertise or expensive professional installation.',
-          'The challenge wasn’t just controlling devices — it was creating a system where multiple products could feel like one.',
-        ],
+        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
       },
       {
         id: 'role',
-        title: 'My role',
-        paragraphs: ['I was a founding member and design leader, responsible for:'],
+        eyebrow: 'My role',
+        title: 'Founding member and design leader',
+        paragraphs: [],
         bullets: [
           'Defining the core interaction model and information architecture',
           'Designing the end-to-end mobile experience',
@@ -154,120 +175,98 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
           'Building and leading a 7-person design team',
           'Driving alignment across product, engineering, and partners',
         ],
+        images: [
+          {
+            src: '/work/wink-role-whiteboard.png',
+            alt: 'Whiteboard session mapping Wink Hub experience principles, ecosystem, and automations',
+          },
+        ],
       },
       {
         id: 'insight',
-        title: 'The insight',
+        eyebrow: 'The insight',
+        title: 'Intent is everything',
         paragraphs: [
-          'Early on, we realized the problem wasn’t technical — it was conceptual.',
-          'Users didn’t think in terms of protocols, brands, or device types.',
+          'Early on, we realized the problem wasn\'t technical — it was conceptual. Users didn\'t think in terms of protocols, brands, or device types.',
           'They thought in terms of intent:',
         ],
-        bullets: ['“Turn off the lights”', '“Lock the house”', '“Set a routine before bed”'],
+        bullets: ['"Turn off the lights"', '"Lock the house"', '"Set a routine before bed"'],
+        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
       },
       {
-        id: 'insight-body',
-        title: '',
-        paragraphs: ['The system needed to reflect how people think, not how devices are built.'],
-      },
-      {
-        id: 'reframing',
-        title: 'Reframing the system',
-        paragraphs: [
-          'We redesigned the experience around a simplified mental model:',
-        ],
+        id: 'reframe',
+        eyebrow: 'The Reframe',
+        title: 'Change the mental model',
+        paragraphs: ['We redesigned the experience around a simplified mental model:'],
         bullets: [
           'Devices — Control individual products in a consistent way, regardless of brand',
-          'Shortcuts — Trigger multiple actions with a single interaction (e.g. “Goodnight” → lights off, doors locked)',
-          'Automations — Create behavior over time based on triggers (e.g. “When I leave, turn everything off”)',
+          'Shortcuts — Trigger multiple actions with a single interaction (e.g. "Goodnight" → lights off, doors locked)',
+          'Automations — Create behavior over time based on triggers (e.g. "When I leave, turn everything off")',
         ],
-        visualSuggestions: [
-          'IA diagram of Devices / Shortcuts / Automations',
-          'Example flows of each',
-          'Simple conceptual diagram (intent → action)',
-        ],
+        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
       },
       {
-        id: 'reframing-body',
-        title: '',
-        paragraphs: [
-          'This allowed users to move from “How do I control this device?” to “What do I want my home to do?”',
-        ],
-      },
-      {
-        id: 'prototyping',
+        id: 'prototype',
+        eyebrow: 'Prototype',
         title: 'Prototyping as a catalyst',
         paragraphs: [
           'To bring this system to life, I built an interactive prototype that simulated how multiple devices could work together in a single experience.',
-          'At the time, this was done using HTML/CSS to create a mobile-like experience that could be used directly on a phone.',
-          'This prototype:',
         ],
-        bullets: [
-          'Made an abstract system feel tangible',
-          'Aligned stakeholders around a shared vision',
-          'Demonstrated the value of a unified platform',
+        bulletGroups: [
+          {
+            label: 'This prototype',
+            items: [
+              'Made an abstract system feel tangible',
+              'Aligned stakeholders around a shared vision',
+              'Demonstrated the value of a unified platform',
+            ],
+          },
         ],
-      },
-      {
-        id: 'prototyping-body',
-        title: '',
-        paragraphs: [
+        closingParagraphs: [
           'It ultimately helped secure a key partnership with The Home Depot, accelerating the launch of Wink as a standalone product.',
         ],
-        visualSuggestions: [
-          'Early prototype screens (even rough)',
-          'Flow animation showing multi-device interaction',
-          '“Prototype → real product” comparison',
-        ],
+        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
       },
       {
-        id: 'brands',
+        id: 'challenge-brands',
+        eyebrow: 'Challenge',
         title: 'Designing across brands',
         paragraphs: [
-          'One of the biggest challenges was creating a consistent experience across products from different companies.',
-          'We worked with multiple lighting, lock, and thermostat brands — each with their own identity and expectations.',
-          'A key example was Philips Hue, who wanted a more custom interaction model for their lighting controls.',
-          'I worked closely with them to understand their priorities, align on the broader user problem, and advocate for consistency across the platform.',
+          'One of the biggest challenges was creating a consistent experience across products from different companies. We worked with multiple lighting, lock, and thermostat brands — each with their own identity and expectations. A key example was Philips Hue, who wanted a more custom interaction model for their lighting controls. I worked closely with them to understand their priorities, align on the broader user problem, and advocate for consistency across the platform.',
           'We ultimately maintained a unified interaction model, incorporated brand identity within the UI, and created a system that balanced consistency with recognition.',
-          'This approach improved usability while strengthening partner relationships.',
+          'This approach improved usability, while strengthening partner relationships.',
         ],
-        visualSuggestions: [
-          'Same interaction across different brands',
-          'Brand logos subtly integrated in UI',
-          'Before/after or comparison of consistency',
-        ],
+        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
       },
       {
-        id: 'hardware-software',
+        id: 'challenge-hardware',
+        eyebrow: 'Challenge',
         title: 'Hardware + software integration',
-        paragraphs: [
-          'The Wink Hub was designed to remove complexity from setup and connectivity.',
-          'We focused on:',
+        paragraphs: ['The Wink Hub was designed to remove complexity from setup and connectivity.'],
+        bulletGroups: [
+          {
+            label: 'We focused on',
+            items: [
+              'Simplifying Wi-Fi connection',
+              'Hiding technical complexity (radios, protocols)',
+              'Making setup feel fast and approachable',
+            ],
+          },
+          {
+            label: 'This resulted in',
+            items: [
+              'Setup time reduced from 30 minutes to 7 minutes',
+              '70% reduction in customer support calls',
+              '97% in-app satisfaction rate',
+            ],
+          },
         ],
-        bullets: [
-          'Simplifying Wi-Fi connection',
-          'Hiding technical complexity (radios, protocols)',
-          'Making setup feel fast and approachable',
-        ],
-      },
-      {
-        id: 'hardware-body',
-        title: '',
-        paragraphs: ['This resulted in:'],
-        bullets: [
-          'Setup time reduced from 30 minutes to 7 minutes',
-          '85% reduction in customer support calls',
-          '97% in-app satisfaction rate',
-        ],
-        visualSuggestions: [
-          'Hub hardware + app setup flow',
-          'Step-by-step onboarding visuals',
-          'Before/after setup experience',
-        ],
+        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
       },
       {
         id: 'outcome',
-        title: 'Outcome',
+        eyebrow: 'Outcome',
+        title: 'A simple accessible smart home',
         paragraphs: [
           'Wink became one of the first platforms to successfully unify multiple smart home products into a single, accessible experience.',
         ],
@@ -280,21 +279,20 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
       },
       {
         id: 'reflection',
-        title: 'Reflection',
-        paragraphs: [
-          'This project fundamentally shaped how I approach complex systems.',
-          'I learned that:',
+        eyebrow: 'Reflection',
+        title: 'Keep breaking down complex systems',
+        paragraphs: ['This project fundamentally shaped how I approach complex systems.'],
+        bulletGroups: [
+          {
+            label: 'I learned that',
+            items: [
+              'Clarity comes from strong mental models, not feature sets',
+              'Prototyping is one of the fastest ways to create alignment',
+              'Consistency across systems is more valuable than individual optimization',
+            ],
+          },
         ],
-        bullets: [
-          'Clarity comes from strong mental models, not feature sets',
-          'Prototyping is one of the fastest ways to create alignment',
-          'Consistency across systems is more valuable than individual optimization',
-        ],
-      },
-      {
-        id: 'reflection-body',
-        title: '',
-        paragraphs: [
+        closingParagraphs: [
           'Most importantly, I learned how to turn complexity into something that feels simple, intuitive, and useful — which continues to guide my work today.',
         ],
       },

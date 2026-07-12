@@ -2,41 +2,26 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import PublicSiteChrome from '../components/case-study/PublicSiteChrome'
 import { getCaseStudy } from '../content/caseStudies'
 
-type SectionBlock = {
-  id: string
-  title: string
-  paragraphs: string[]
-  bullets: string[]
-  visualSuggestions: string[]
+function sectionEyebrow(section: { eyebrow?: string; id: string }) {
+  return section.eyebrow ?? section.id.replace(/-/g, ' ')
 }
 
-function buildSectionBlocks(study: NonNullable<ReturnType<typeof getCaseStudy>>): SectionBlock[] {
-  const blocks: SectionBlock[] = []
-
-  for (let i = 0; i < study.sections.length; i += 1) {
-    const section = study.sections[i]
-    if (!section.title) continue
-
-    const block: SectionBlock = {
-      id: section.id,
-      title: section.title,
-      paragraphs: [...section.paragraphs],
-      bullets: section.bullets ? [...section.bullets] : [],
-      visualSuggestions: section.visualSuggestions ? [...section.visualSuggestions] : [],
-    }
-
-    const next = study.sections[i + 1]
-    if (next && !next.title) {
-      block.paragraphs.push(...next.paragraphs)
-      if (next.bullets) block.bullets.push(...next.bullets)
-      if (next.visualSuggestions) block.visualSuggestions.push(...next.visualSuggestions)
-      i += 1
-    }
-
-    blocks.push(block)
-  }
-
-  return blocks
+/** Highlight +, →, and ↓ in amber to match homepage / Figma stats treatment. */
+function StatValue({ value }: { value: string }) {
+  const parts = value.split(/([+→↓])/)
+  return (
+    <>
+      {parts.map((part, i) =>
+        part === '+' || part === '→' || part === '↓' ? (
+          <span key={`${part}-${i}`} className="text-amber-500">
+            {part}
+          </span>
+        ) : (
+          <span key={`${part}-${i}`}>{part}</span>
+        ),
+      )}
+    </>
+  )
 }
 
 export default function CaseStudyPage() {
@@ -76,61 +61,37 @@ export default function CaseStudyPage() {
     )
   }
 
-  const sectionBlocks = buildSectionBlocks(study)
-  const heroArtLabel = study.heroVisualSuggestions?.[0] ?? 'Hero visual'
-  const winkSummary = [
-    {
-      label: 'Users',
-      value: '1M+',
-      supporting: 'Designed from scratch and scaled to over 1 million users',
-    },
-    {
-      label: 'Partners',
-      value: '40+',
-      supporting: 'Unified products from 40+ connected-home brand partners',
-    },
-    {
-      label: 'Setup time',
-      value: '30→7 mins',
-      supporting: 'Reduced onboarding complexity from thirty minutes to seven',
-    },
-    {
-      label: 'Support calls',
-      value: '↓ 85%',
-      supporting: 'Design-led improvements reduced customer service call volume',
-    },
-  ]
-  const summaryRows = study.slug === 'wink'
-    ? winkSummary
-    : study.summary.map((s) => ({
-      label: s.label,
-      value: s.value,
-      supporting: '',
-    }))
+  const heroImageSrc = study.heroImageSrc ?? study.heroVisualSuggestions?.[0]
+  const heroImageAlt = study.heroImageAlt ?? `${study.title} case study`
 
   return (
     <PublicSiteChrome>
       <article className="border-b border-slate-800/70">
-        <header className="relative overflow-hidden border-b border-slate-800/60">
-          <div className="absolute inset-0 opacity-30">
-            <img src="/hero-ui-loop-poster.svg" alt="" className="h-full w-full object-cover" />
-          </div>
-          <div className="absolute inset-0 bg-slate-950/70" />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/80 to-slate-950" />
-          <div className="absolute inset-0 opacity-60" style={{
-            background:
-              'radial-gradient(1200px 600px at 30% 40%, rgba(245,158,11,0.20), transparent 60%), radial-gradient(900px 500px at 70% 60%, rgba(56,189,248,0.14), transparent 60%)',
-          }} />
-
-          <div className="relative mx-auto max-w-5xl px-6 py-16 md:py-24">
-            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_400px]">
+        <header className="border-b border-slate-800/60 bg-slate-950">
+          <div className="mx-auto max-w-5xl px-6 py-16 md:py-20">
+            <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-12">
               <div>
                 <p className="text-sm font-medium uppercase tracking-widest text-amber-500/90">Case study</p>
-                <h1 className="mt-4 font-display text-5xl leading-tight text-white md:text-6xl md:leading-[1.08]">{study.title}</h1>
-                <p className="mt-4 text-xl font-medium text-slate-400">{study.subtitle}</p>
-                <p className="mt-6 max-w-2xl text-sm leading-relaxed text-slate-300">{study.dek}</p>
+                <h1 className="mt-2 font-display text-5xl leading-tight text-white md:text-6xl md:leading-[1.08]">
+                  {study.title}
+                </h1>
+                <p className="mt-4 font-display text-2xl leading-snug text-slate-300 md:text-3xl">{study.subtitle}</p>
 
-                <dl className="mt-10 grid gap-x-6 gap-y-6 border-t border-slate-700 pt-8 sm:grid-cols-2">
+                {heroImageSrc && heroImageSrc.startsWith('/') ? (
+                  <div className="mt-6 overflow-hidden rounded-xl bg-[#dbe8f0] lg:hidden">
+                    <img
+                      src={heroImageSrc}
+                      alt={heroImageAlt}
+                      className="aspect-[3/2] w-full object-cover object-center"
+                    />
+                  </div>
+                ) : null}
+
+                <p className="mt-6 max-w-2xl text-sm leading-relaxed text-slate-400 md:text-base">
+                  {study.dek}
+                </p>
+
+                <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 border-t border-slate-800 pt-8">
                   {study.meta.map((row) => (
                     <div key={row.label}>
                       <dt className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-500">{row.label}</dt>
@@ -140,9 +101,15 @@ export default function CaseStudyPage() {
                 </dl>
               </div>
 
-              <div className="hidden items-center justify-center bg-slate-700/90 text-sm text-slate-200 lg:flex">
-                {heroArtLabel}
-              </div>
+              {heroImageSrc && heroImageSrc.startsWith('/') ? (
+                <div className="hidden overflow-hidden rounded-xl bg-[#dbe8f0] lg:block">
+                  <img
+                    src={heroImageSrc}
+                    alt={heroImageAlt}
+                    className="aspect-[3/2] w-full object-cover object-center"
+                  />
+                </div>
+              ) : null}
             </div>
           </div>
         </header>
@@ -150,10 +117,14 @@ export default function CaseStudyPage() {
         {study.summary.length > 0 && (
           <div className="border-b border-slate-800/70 bg-slate-900">
             <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-6 py-10 sm:grid-cols-2 lg:grid-cols-4">
-              {summaryRows.map((s) => (
-                <div key={s.label} className="space-y-2">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-500">{s.label}</p>
-                  <p className="text-4xl font-light tracking-[0.02em] text-white">{s.value}</p>
+              {study.summary.map((s, index) => (
+                <div key={s.label ?? `summary-${index}`} className="space-y-2">
+                  {s.label ? (
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-500">{s.label}</p>
+                  ) : null}
+                  <p className="text-4xl font-light tracking-[0.02em] text-white">
+                    <StatValue value={s.value} />
+                  </p>
                   {s.supporting ? <p className="text-sm leading-relaxed text-slate-400">{s.supporting}</p> : null}
                 </div>
               ))}
@@ -161,8 +132,12 @@ export default function CaseStudyPage() {
           </div>
         )}
 
-        {sectionBlocks.map((section, index) => {
+        {study.sections.map((section, index) => {
           const mediaFirst = index % 2 === 1
+          const images = section.images ?? []
+          const visuals = section.visualSuggestions ?? []
+          const hasVisuals = images.length > 0 || visuals.length > 0
+
           return (
             <section
               key={section.id}
@@ -170,44 +145,125 @@ export default function CaseStudyPage() {
               className={`border-b border-slate-800/70 ${index % 2 === 0 ? 'bg-slate-950' : 'bg-[#0a1022]'} scroll-mt-24`}
             >
               <div className="mx-auto max-w-5xl px-6 py-14 md:py-20">
-                <div className="grid items-start gap-8 lg:grid-cols-[560px_200px_200px] lg:gap-6">
-                  <div className={mediaFirst ? 'lg:order-2' : ''}>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-500">
-                      {section.id.replace(/-/g, ' ')}
+                <div
+                  className={
+                    hasVisuals
+                      ? 'grid items-start gap-8 lg:grid-cols-2 lg:gap-12'
+                      : 'max-w-3xl'
+                  }
+                >
+                  <div className={mediaFirst && hasVisuals ? 'lg:order-2' : ''}>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-amber-500">
+                      {sectionEyebrow(section)}
                     </p>
-                    <h2 className="mt-2 font-display text-[30px] leading-[1.25] text-white">{section.title}</h2>
+                    <h2 className="mt-2 font-display text-[30px] leading-[1.25] text-white md:text-[32px]">
+                      {section.title}
+                    </h2>
 
-                    <div className="mt-6 space-y-4">
-                      {section.paragraphs.map((p, i) => (
-                        <p key={`${section.id}-p-${i}`} className="text-sm leading-[1.65] text-slate-400">
-                          {p}
-                        </p>
-                      ))}
-                    </div>
+                    {section.paragraphs.length > 0 && (
+                      <div className="mt-6 space-y-4">
+                        {section.paragraphs.map((p, i) => (
+                          <p key={`${section.id}-p-${i}`} className="text-sm leading-[1.65] text-slate-400 md:text-base">
+                            {p}
+                          </p>
+                        ))}
+                      </div>
+                    )}
 
-                    {section.bullets.length > 0 && (
-                      <ul className="mt-5 list-disc space-y-2 pl-5 text-sm leading-[1.65] text-slate-400">
+                    {section.bullets && section.bullets.length > 0 && (
+                      <ul className="mt-5 list-disc space-y-2 pl-5 text-sm leading-[1.65] text-slate-400 md:text-base">
                         {section.bullets.map((b, i) => (
                           <li key={`${section.id}-b-${i}`}>{b}</li>
                         ))}
                       </ul>
                     )}
+
+                    {section.bulletGroups?.map((group, groupIndex) => (
+                      <div key={`${section.id}-group-${groupIndex}`} className="mt-5">
+                        {group.label ? (
+                          <p className="text-sm leading-[1.65] text-slate-400 md:text-base">{group.label}</p>
+                        ) : null}
+                        <ul className={`list-disc space-y-2 pl-5 text-sm leading-[1.65] text-slate-400 md:text-base ${group.label ? 'mt-2' : ''}`}>
+                          {group.items.map((item, itemIndex) => (
+                            <li key={`${section.id}-group-${groupIndex}-item-${itemIndex}`}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+
+                    {section.closingParagraphs && section.closingParagraphs.length > 0 && (
+                      <div className="mt-6 space-y-4">
+                        {section.closingParagraphs.map((p, i) => (
+                          <p key={`${section.id}-closing-${i}`} className="text-sm leading-[1.65] text-slate-400 md:text-base">
+                            {p}
+                          </p>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
-                  <div className={`grid grid-cols-2 gap-4 sm:grid-cols-2 lg:col-span-2 ${mediaFirst ? 'lg:order-1' : ''}`}>
-                    <div className="flex h-56 items-center justify-center rounded-lg bg-slate-700 text-sm text-slate-200">
-                      {section.visualSuggestions[0] ?? 'Image placeholder'}
+                  {hasVisuals ? (
+                    <div className={mediaFirst ? 'lg:order-1' : ''}>
+                      {images.length > 0 ? (
+                        <div className={images.length === 1 ? '' : 'grid grid-cols-2 gap-4'}>
+                          {images.map((image) => (
+                            <div
+                              key={image.src}
+                              className="overflow-hidden rounded-lg bg-slate-800/90"
+                            >
+                              <img
+                                src={image.src}
+                                alt={image.alt}
+                                className={
+                                  images.length === 1
+                                    ? 'aspect-[4/3] w-full object-cover'
+                                    : 'aspect-[9/16] w-full object-cover'
+                                }
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-4">
+                          {visuals.map((label, visualIndex) => (
+                            <div
+                              key={`${section.id}-visual-${visualIndex}`}
+                              className="flex aspect-[9/16] items-end justify-center rounded-lg bg-slate-800/90 p-4 text-center text-xs text-slate-400"
+                            >
+                              {label}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className="flex h-56 items-center justify-center rounded-lg bg-slate-700 text-sm text-slate-200">
-                      {section.visualSuggestions[1] ?? 'Image placeholder'}
-                    </div>
-                  </div>
+                  ) : null}
                 </div>
               </div>
             </section>
           )
         })}
 
+        {study.closingColumns && study.closingColumns.length > 0 && (
+          <section className="border-b border-slate-800/70 bg-slate-950">
+            <div className="mx-auto grid max-w-5xl gap-12 px-6 py-14 md:grid-cols-2 md:py-20">
+              {study.closingColumns.map((column) => (
+                <div key={column.eyebrow}>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-amber-500">
+                    {column.eyebrow}
+                  </p>
+                  <h2 className="mt-2 font-display text-[30px] leading-[1.25] text-white">{column.title}</h2>
+                  <div className="mt-6 space-y-4">
+                    {column.paragraphs.map((p, i) => (
+                      <p key={`${column.eyebrow}-p-${i}`} className="text-sm leading-[1.65] text-slate-400 md:text-base">
+                        {p}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </article>
     </PublicSiteChrome>
   )
