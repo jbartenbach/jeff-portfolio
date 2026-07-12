@@ -21,6 +21,8 @@ export type CaseStudySection = {
   closingParagraphs?: string[]
   /** Real section images (prefer over visualSuggestions when present) */
   images?: Array<{ src: string; alt: string }>
+  /** Optional interactive prototype instead of static images */
+  prototype?: 'wink'
   /** Art direction / layout notes for a future visual pass */
   visualSuggestions?: string[]
 }
@@ -152,16 +154,26 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
     sections: [
       {
         id: 'problem',
-        eyebrow: 'The Problem to solve',
-        title: 'Make the smart home accessible beyond the tech-savvy and wealthy',
+        eyebrow: 'The Problem',
+        title: 'The smart home was everywhere but nowhere together',
         paragraphs: [
-          'Smart home technology was fragmented, technical, and largely inaccessible to everyday users.',
+          'Smart home technology was fragmented, technical, but clunky to use for most people.',
           'The experience of connecting products across brands required either technical expertise or expensive professional installation.',
           'The challenge wasn\'t just controlling devices — it was creating a system where multiple products could feel like one.',
-          'Each device:',
+          'Consumer devices used different radios and many required their own hub, and none of them worked together.',
         ],
-        bullets: ['Had its own app', 'Its own setup process', 'Its own logic'],
-        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
+        bulletGroups: [
+          {
+            label: 'Each Device',
+            items: ['Had its own app', 'Its own setup process', 'Its own logic'],
+          },
+        ],
+        images: [
+          {
+            src: '/work/wink-problem.png',
+            alt: 'Cluttered countertop of smart home hubs, cables, and a phone full of separate brand apps',
+          },
+        ],
       },
       {
         id: 'role',
@@ -187,11 +199,24 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
         eyebrow: 'The insight',
         title: 'Intent is everything',
         paragraphs: [
-          'Early on, we realized the problem wasn\'t technical — it was conceptual. Users didn\'t think in terms of protocols, brands, or device types.',
+          'Early on, we had a very product-first approach to the design to make it simple to know what you\'re controlling, but we realized the problem we needed to solve was more conceptual. Users didn\'t think in terms of protocols, brands, or device types.',
           'They thought in terms of intent:',
         ],
         bullets: ['"Turn off the lights"', '"Lock the house"', '"Set a routine before bed"'],
-        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
+        images: [
+          {
+            src: '/work/wink-insight-1.png',
+            alt: 'Wink Lights screen with a grid of room light and outlet controls',
+          },
+          {
+            src: '/work/wink-insight-2.png',
+            alt: 'Wink Locks screen showing Front Door locked and Back Door unlocked',
+          },
+          {
+            src: '/work/wink-insight-3.png',
+            alt: 'Nest Thermostat screen showing temperature dial and home away modes',
+          },
+        ],
       },
       {
         id: 'reframe',
@@ -203,7 +228,12 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
           'Shortcuts — Trigger multiple actions with a single interaction (e.g. "Goodnight" → lights off, doors locked)',
           'Automations — Create behavior over time based on triggers (e.g. "When I leave, turn everything off")',
         ],
-        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
+        images: [
+          {
+            src: '/work/wink.png',
+            alt: 'Wink smart home app on three iPhones showing home, shortcuts, and robots screens',
+          },
+        ],
       },
       {
         id: 'prototype',
@@ -225,7 +255,7 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
         closingParagraphs: [
           'It ultimately helped secure a key partnership with The Home Depot, accelerating the launch of Wink as a standalone product.',
         ],
-        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
+        prototype: 'wink',
       },
       {
         id: 'challenge-brands',
@@ -236,7 +266,16 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
           'We ultimately maintained a unified interaction model, incorporated brand identity within the UI, and created a system that balanced consistency with recognition.',
           'This approach improved usability, while strengthening partner relationships.',
         ],
-        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
+        images: [
+          {
+            src: '/work/wink-insight-1.png',
+            alt: 'Wink Lights screen with a grid of room light and outlet controls',
+          },
+          {
+            src: '/work/wink-challenge-brands-2.png',
+            alt: 'Philips Hue lighting controls with color wheel and swatch presets',
+          },
+        ],
       },
       {
         id: 'challenge-hardware',
@@ -261,7 +300,12 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
             ],
           },
         ],
-        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
+        images: [
+          {
+            src: '/work/wink-challenge-hub.png',
+            alt: 'Wink Hub 2 packaging, hardware, and successful setup screen on a phone',
+          },
+        ],
       },
       {
         id: 'outcome',

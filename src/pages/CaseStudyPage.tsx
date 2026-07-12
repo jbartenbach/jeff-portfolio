@@ -1,5 +1,6 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
 import PublicSiteChrome from '../components/case-study/PublicSiteChrome'
+import WinkPrototype from '../components/case-study/WinkPrototype'
 import { getCaseStudy } from '../content/caseStudies'
 
 function sectionEyebrow(section: { eyebrow?: string; id: string }) {
@@ -136,7 +137,8 @@ export default function CaseStudyPage() {
           const mediaFirst = index % 2 === 1
           const images = section.images ?? []
           const visuals = section.visualSuggestions ?? []
-          const hasVisuals = images.length > 0 || visuals.length > 0
+          const hasPrototype = Boolean(section.prototype)
+          const hasVisuals = hasPrototype || images.length > 0 || visuals.length > 0
 
           return (
             <section
@@ -204,8 +206,18 @@ export default function CaseStudyPage() {
 
                   {hasVisuals ? (
                     <div className={mediaFirst ? 'lg:order-1' : ''}>
-                      {images.length > 0 ? (
-                        <div className={images.length === 1 ? '' : 'grid grid-cols-2 gap-4'}>
+                      {section.prototype === 'wink' ? (
+                        <WinkPrototype />
+                      ) : images.length > 0 ? (
+                        <div
+                          className={
+                            images.length === 1
+                              ? ''
+                              : images.length === 3
+                                ? 'grid grid-cols-3 gap-3'
+                                : 'grid grid-cols-2 gap-4'
+                          }
+                        >
                           {images.map((image) => (
                             <div
                               key={image.src}
@@ -214,11 +226,7 @@ export default function CaseStudyPage() {
                               <img
                                 src={image.src}
                                 alt={image.alt}
-                                className={
-                                  images.length === 1
-                                    ? 'aspect-[4/3] w-full object-cover'
-                                    : 'aspect-[9/16] w-full object-cover'
-                                }
+                                className="h-auto w-full object-contain"
                               />
                             </div>
                           ))}
