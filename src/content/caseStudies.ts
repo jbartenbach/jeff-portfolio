@@ -98,17 +98,6 @@ export const caseStudyList: CaseStudyListItem[] = [
     published: true,
   },
   {
-    slug: 'maximus-health-data',
-    title: 'Maximus health data',
-    tag: 'Personalized medicine',
-    blurb:
-      'Made health data understandable and actionable. Simplified complex biomarker data. Designed for trends and progress. Introduced AI-driven prototyping.',
-    meta: '2023–2026 · Principal Product Designer',
-    imageSrc: '/work/maximus-health-data.png',
-    imageAlt: 'Maximus at-home health kit with lab results app showing Maximus score and cardiovascular risk',
-    published: true,
-  },
-  {
     slug: 'bombardier',
     title: 'Bombardier',
     tag: 'Private jet experience',
@@ -117,6 +106,17 @@ export const caseStudyList: CaseStudyListItem[] = [
     meta: '2013 · Interaction Design Lead',
     imageSrc: '/work/bombardier.png',
     imageAlt: 'Bombardier private jet cabin with media and cabin control tablet and tactile dial',
+    published: true,
+  },
+  {
+    slug: 'maximus-health-data',
+    title: 'Maximus health data',
+    tag: 'Personalized medicine',
+    blurb:
+      'Made health data understandable and actionable. Simplified complex biomarker data. Designed for trends and progress. Introduced AI-driven prototyping.',
+    meta: '2023–2026 · Principal Product Designer',
+    imageSrc: '/work/maximus-health-data.png',
+    imageAlt: 'Maximus at-home health kit with lab results app showing Maximus score and cardiovascular risk',
     published: true,
   },
 ]
@@ -533,30 +533,34 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
     dek:
       "Explored three concept directions for a private jet cabin control system, then refined a dial-based interaction model into a production interface for Bombardier's Global 7500.",
     meta: [
-      { label: 'Role', value: 'Senior Interaction Designer' },
+      { label: 'Role', value: 'Interaction Design Lead' },
       { label: 'Timeline', value: '2012' },
-      { label: 'Team', value: 'Lorem ipsum' },
+      {
+        label: 'Team',
+        value:
+          'Teague Interaction & Industrial design leads, 2 junior interaction designers, stakeholders; Bombardier interior design team',
+      },
       { label: 'Scope', value: 'Side-ledge interface, tablet app, and in-seat dial controller' },
     ],
     summary: [
+      {
+        label: 'Award',
+        value: '🔴',
+        supporting: '2018 Red Dot Award in Product Design',
+      },
+      {
+        label: 'Patents',
+        value: '7+',
+        supporting: 'Interface design patents awarded',
+      },
       {
         label: 'Concepts Explored',
         value: '3',
         supporting: 'Performance, Bespoke, and Zen directions explored before landing on the final design',
       },
       {
-        label: 'Patents',
-        value: '7',
-        supporting: 'Interface design patents awarded',
-      },
-      {
-        label: 'Award',
-        value: 'Red Dot 2018',
-        supporting: 'Red Dot Award in Product Design',
-      },
-      {
         label: 'Announced',
-        value: 'May 2018',
+        value: '2018',
         supporting: 'Shipped as Bombardier\'s "nice Touch CMS"',
       },
     ],
@@ -565,24 +569,34 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
     sections: [
       {
         id: 'problem',
-        eyebrow: 'Problem',
+        eyebrow: 'The problem',
         title: 'Fragmented physical controls',
         paragraphs: [
           "Bombardier's private jet cabins relied on scattered physical switches and recessed buttons for lighting, shades, temperature, and entertainment — functional, but with no single, intuitive way to control the cabin experience.",
         ],
-        visualSuggestions: ['Existing cabin controls', 'Recessed button panel'],
+        images: [
+          {
+            src: '/work/bombardier-problem.png',
+            alt: 'Bombardier Challenger 300 cabin screen with dated DVD and zone controls in wood panel',
+          },
+        ],
       },
       {
         id: 'role',
         eyebrow: 'My Role',
-        title: 'Senior Interaction Designer',
+        title: 'Interaction Design Lead',
         paragraphs: [],
         bullets: [
           'Explored three concept directions — Performance, Bespoke, and Zen — for cabin controls',
           'Designed and iterated wireframes for the side-ledge, tablet, and dial interfaces',
           'Refined the winning concept from early wireframes through to a shippable interaction model',
         ],
-        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
+        images: [
+          {
+            src: '/work/bombardier-role.png',
+            alt: 'Design mood board exploring texture, geometry, typography, color, and layering for cabin experience',
+          },
+        ],
       },
       {
         id: 'insight',
@@ -597,23 +611,12 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
           'Bespoke — personalized, inspired by travel and leather goods',
           'Zen — calm, tactile, and minimal',
         ],
-        visualSuggestions: ['Performance mood board', 'Bespoke mood board', 'Zen mood board'],
-      },
-      {
-        id: 'reframe',
-        eyebrow: 'Knob Experience',
-        title: 'One dial, five gestures',
-        paragraphs: [
-          "The Zen concept's dial became the core interaction model, reduced to a small, consistent gesture set:",
+        images: [
+          {
+            src: '/work/bombardier-insight.png',
+            alt: 'Performance, Bespoke, and Zen mood boards for Bombardier cabin control concepts',
+          },
         ],
-        bullets: [
-          'Swipe to wake',
-          'Tap to select an item',
-          'Touch the ring to show adjustment',
-          'Turn the dial to make an adjustment',
-          'Release the ring to show the selection screen',
-        ],
-        visualSuggestions: ['Knob interaction diagrams'],
       },
       {
         id: 'prototype',
@@ -632,7 +635,33 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
             ],
           },
         ],
-        visualSuggestions: ['Performance Round 1', 'Bespoke Round 1', 'Zen Round 1'],
+        images: [
+          {
+            src: '/work/bombardier-prototype.png',
+            alt: 'Performance, Bespoke, and Zen cabin interface wireframes and hardware concepts',
+          },
+        ],
+      },
+      {
+        id: 'reframe',
+        eyebrow: 'Knob Experience',
+        title: 'One dial, five gestures',
+        paragraphs: [
+          "The Zen concept's dial became the core interaction model, reduced to a small, consistent gesture set:",
+        ],
+        bullets: [
+          'Swipe to wake',
+          'Tap to select an item',
+          'Touch the ring to show adjustment',
+          'Turn the dial to make an adjustment',
+          'Release the ring to show the selection screen',
+        ],
+        images: [
+          {
+            src: '/work/bombardier-reframe.png',
+            alt: 'Bombardier cabin control dial with illuminated icons on a dark wood ledge',
+          },
+        ],
       },
       {
         id: 'challenge-dial',
@@ -641,16 +670,26 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
         paragraphs: [
           'The dial is small enough to sit on a side table, but it needed to control media playback, zone lighting, presets, shades, temperature, and cabin-attendant calls — all through turning, tapping, and swiping one compact physical control.',
         ],
-        visualSuggestions: ['Knob wireframes', 'Icon set explorations'],
+        images: [
+          {
+            src: '/work/bombardier-challenge.png',
+            alt: 'The Dial product render and seat vs cabin interaction hierarchy diagram',
+          },
+        ],
       },
       {
-        id: 'challenge-direction',
-        eyebrow: 'Challenge',
-        title: 'Choosing one direction from three',
+        id: 'challenge-tablet',
+        eyebrow: 'The tablet',
+        title: "Everything in it's right place",
         paragraphs: [
-          'Performance, Bespoke, and Zen each had a fully realized wireframe and a first round of visual design before the team converged on the dial-based Zen direction as the interaction model that ultimately shipped.',
+          'A full tablet experience accompanies the dial to allow for media viewing a richer experience in choosing media and for when full cabin control is needed to the lighting just right everywhere.',
         ],
-        visualSuggestions: ['3 Concepts mood board comparison'],
+        images: [
+          {
+            src: '/work/bombardier-challenge-tablet.png',
+            alt: 'Tablet cabin management UI for media, lighting, presets, and movie selection',
+          },
+        ],
       },
       {
         id: 'outcome',
@@ -664,19 +703,12 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
           'Awarded 7 interface design patents',
           'Won a Red Dot Award in Product Design, 2018',
         ],
-      },
-      {
-        id: 'reflection',
-        eyebrow: 'Reflection',
-        title: 'Lorem ipsum dolor sit amet',
-        paragraphs: ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.'],
-        bulletGroups: [
+        images: [
           {
-            label: 'Lorem ipsum',
-            items: ['Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum'],
+            src: '/work/bombardier.png',
+            alt: 'Bombardier Global cabin control dial on a wood side ledge',
           },
         ],
-        closingParagraphs: ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.'],
       },
     ],
   },

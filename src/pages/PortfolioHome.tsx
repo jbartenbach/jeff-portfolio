@@ -5,7 +5,10 @@ import { AIPracticeSection, WhatIDoSection } from '../components/site/AboutSecti
 import { caseStudyList } from '../content/caseStudies'
 import { sectionLabelClass } from '../content/siteContent'
 
-const featuredCaseStudies = caseStudyList.slice(0, 3)
+const featuredSlugs = ['wink', 'daily-harvest', 'bombardier'] as const
+const featuredCaseStudies = featuredSlugs
+  .map((slug) => caseStudyList.find((study) => study.slug === slug))
+  .filter((study): study is (typeof caseStudyList)[number] => Boolean(study))
 
 export default function PortfolioHome() {
   const stats = [
