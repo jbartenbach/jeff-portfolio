@@ -87,17 +87,6 @@ export const caseStudyList: CaseStudyListItem[] = [
     published: true,
   },
   {
-    slug: 'maximus-health-data',
-    title: 'Maximus health data',
-    tag: 'Personalized medicine',
-    blurb:
-      'Made health data understandable and actionable. Simplified complex biomarker data. Designed for trends and progress. Introduced AI-driven prototyping.',
-    meta: '2023–2026 · Principal Product Designer',
-    imageSrc: '/work/maximus-health-data.png',
-    imageAlt: 'Maximus at-home health kit with lab results app showing Maximus score and cardiovascular risk',
-    published: true,
-  },
-  {
     slug: 'daily-harvest',
     title: 'Daily Harvest',
     tag: 'e-commerce subscription',
@@ -106,6 +95,17 @@ export const caseStudyList: CaseStudyListItem[] = [
     meta: '2019–2022 · Principal Product Designer',
     imageSrc: '/work/daily-harvest.png',
     imageAlt: 'Daily Harvest mobile site on iPhone showing hero and product offerings',
+    published: true,
+  },
+  {
+    slug: 'maximus-health-data',
+    title: 'Maximus health data',
+    tag: 'Personalized medicine',
+    blurb:
+      'Made health data understandable and actionable. Simplified complex biomarker data. Designed for trends and progress. Introduced AI-driven prototyping.',
+    meta: '2023–2026 · Principal Product Designer',
+    imageSrc: '/work/maximus-health-data.png',
+    imageAlt: 'Maximus at-home health kit with lab results app showing Maximus score and cardiovascular risk',
     published: true,
   },
   {
@@ -357,26 +357,328 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
   'daily-harvest': {
     slug: 'daily-harvest',
     title: 'Daily Harvest',
-    subtitle: 'Reframing subscription around how people actually shop',
+    subtitle: 'Tasting Journey',
     tag: 'e-commerce subscription',
     dek:
-      'Reframed the subscription experience around how people actually shop. Increased conversion by 25%. Introduced flexible purchasing model. Simplified product + pricing complexity.',
-    meta: [{ label: 'Role', value: '2019–2022 · Principal Product Designer' }],
-    summary: [],
-    sections: [],
-    placeholder: true,
+      "Redesigned Daily Harvest's path from first-time visitor to loyal subscriber, introducing a no-commitment Tasting Box that let new customers try the food before buying into a subscription.",
+    meta: [
+      { label: 'Role', value: 'Principal Product Designer' },
+      { label: 'Timeline', value: '2021 — 6mos' },
+      { label: 'Team', value: 'CEO, Product Manager, Lead Engineer' },
+      { label: 'Scope', value: 'Mobile app, website — onboarding' },
+    ],
+    summary: [
+      {
+        label: 'Conversion',
+        value: '+25%',
+        supporting: 'Increase in conversion of first-time visitors',
+      },
+      {
+        label: 'Speed',
+        value: '>6 mos',
+        supporting: 'Researched, redesigned, and shipped iteratively',
+      },
+    ],
+    heroImageSrc: '/work/daily-harvest.png',
+    heroImageAlt: 'Daily Harvest mobile site on iPhone showing hero and product offerings',
+    sections: [
+      {
+        id: 'problem',
+        eyebrow: 'The problem',
+        title: 'Committing before trying',
+        paragraphs: [
+          "New customers were being asked to choose a recurring plan before they'd tasted a single item, creating hesitation right at signup.",
+          '"I don\'t want to commit to a subscription for food I haven\'t even tried yet."',
+        ],
+        images: [
+          {
+            src: '/work/daily-harvest-problem.png',
+            alt: 'Daily Harvest Select Your Plan screen asking customers to choose Small, Medium, or Large before trying the food',
+          },
+        ],
+      },
+      {
+        id: 'role',
+        eyebrow: 'My Role',
+        title: 'Lead Designer',
+        paragraphs: [],
+        bullets: [
+          'Led research efforts and distilled customer insights',
+          'Created and evangelized the core concept; Try, Love, Repeat',
+          'Designed the end-to-end user experience',
+          'Worked closely with product management to meet business goals',
+          'Worked closely with Engineers to scope changes and create a successful iterative path',
+          'Drove alignment with stakeholders including the CEO',
+        ],
+        images: [
+          {
+            src: '/work/daily-harvest-role.png',
+            alt: 'Multiple iPhones showing Daily Harvest flows for onboarding, box selection, checkout, and tasting journey',
+          },
+        ],
+      },
+      {
+        id: 'insight',
+        eyebrow: 'The insight',
+        title: 'Trust is built one bite at a time',
+        paragraphs: [
+          "Customers didn't commit to Daily Harvest all at once — they moved through it in stages, from first taste to favorite items to daily habit.",
+          'The journey we designed around:',
+        ],
+        bullets: [
+          '"Get a taste" — start with a Tasting Box filled with what looks good',
+          '"Find your faves" — tell us what you like (and don\'t), and we\'ll help you find more of it',
+          '"Keep good going" — eat more fruits and vegetables every day',
+        ],
+        images: [
+          {
+            src: '/work/daily-harvest-insight.png',
+            alt: 'Daily Harvest tasting journey with Try, Love, Repeat and How it Works phone screen',
+          },
+        ],
+      },
+      {
+        id: 'reframe',
+        eyebrow: 'The reframe',
+        title: 'A Try, Love, Repeat framework',
+        paragraphs: ['We translated the customer\'s stages into a three-part design framework:'],
+        bullets: [
+          'Try — Give customers options while reducing the variables of change, so we could get a clean signal on what was working',
+          'Love — Guide customers to rate the food from their first box so we could help them find more of what they liked',
+          'Repeat — Surface recurring-plan savings more prominently once a customer had dialed in the foods they loved',
+        ],
+        images: [
+          {
+            src: '/work/daily-harvest-reframe-1.png',
+            alt: 'Daily Harvest Select Your Items screen with best sellers and quantity controls',
+          },
+          {
+            src: '/work/daily-harvest-reframe-2.png',
+            alt: 'Daily Harvest welcome screen with tasting box delivery details',
+          },
+          {
+            src: '/work/daily-harvest-reframe-3.png',
+            alt: 'Daily Harvest For You screen with Ready to Restock and Get Em Again',
+          },
+        ],
+      },
+      {
+        id: 'explorations',
+        eyebrow: 'Explorations',
+        title: 'Exploring the box-building and checkout experience',
+        paragraphs: [
+          'To find the right shape for the experience, multiple directions were explored for how customers would choose a delivery cadence, build their box, and check out.',
+        ],
+        bulletGroups: [
+          {
+            label: 'Explored Directions',
+            items: [
+              'On-demand vs. auto-refill delivery, each with its own pricing and incentives',
+              'A "Build Your Box" flow for selecting items from Our Picks, Smoothies, and Harvest Bowls',
+              'Checkout variations comparing Tasting Box vs. Recurring Plan pricing and savings',
+            ],
+          },
+        ],
+        images: [
+          {
+            src: '/work/daily-harvest-explorations.png',
+            alt: 'Daily Harvest explorations showing Choose a Delivery, Select Your Items, and Checkout screens',
+          },
+        ],
+      },
+      {
+        id: 'refine',
+        eyebrow: 'Refine',
+        title: 'Simplifying box selection at checkout',
+        paragraphs: [
+          'Early versions asked customers to pick a box size before it was clear whether they wanted a one-time Tasting Box or an ongoing Recurring Plan, creating confusion at a key decision point.',
+        ],
+        bulletGroups: [
+          {
+            label: 'What Changed',
+            items: [
+              'Renamed "Select a Box Size" to "Select a Box Type," leading with the plan decision',
+              'Simplified the toggle from Recurring Plan / Tasting Box to Recurring Plan / Single Box',
+              'Adjusted the checkout button to draw clearer attention at the final step',
+            ],
+          },
+        ],
+        images: [
+          {
+            src: '/work/daily-harvest-refine.png',
+            alt: 'Before and after Daily Harvest box selection: Select a Box Size versus Select a Box Type',
+          },
+        ],
+      },
+      {
+        id: 'outcome',
+        eyebrow: 'Impact',
+        title: 'A lower-friction path to trial and re-engagement',
+        paragraphs: [
+          'Removing the subscription requirement changed how new and lapsed customers could enter the funnel.',
+        ],
+        bullets: [
+          '25% increase in conversion of first-time visitors',
+          'Unlocked purchasing without a subscription, allowing re-engagement with churned customers',
+          'Created a path to reduce cancellations by converting them to single-box purchasers',
+        ],
+      },
+    ],
   },
   bombardier: {
     slug: 'bombardier',
     title: 'Bombardier',
-    subtitle: 'A multi-surface private jet cabin experience',
+    subtitle: 'Redesign the passenger cabin experience',
     tag: 'Private jet experience',
     dek:
-      'Designed a multi-surface cabin experience. Created unified system across hardware + software. Introduced patented interaction model. Designed for long-term relevance.',
-    meta: [{ label: 'Role', value: '2013 · Interaction Design Lead' }],
-    summary: [],
-    sections: [],
-    placeholder: true,
+      "Explored three concept directions for a private jet cabin control system, then refined a dial-based interaction model into a production interface for Bombardier's Global 7500.",
+    meta: [
+      { label: 'Role', value: 'Senior Interaction Designer' },
+      { label: 'Timeline', value: '2012' },
+      { label: 'Team', value: 'Lorem ipsum' },
+      { label: 'Scope', value: 'Side-ledge interface, tablet app, and in-seat dial controller' },
+    ],
+    summary: [
+      {
+        label: 'Concepts Explored',
+        value: '3',
+        supporting: 'Performance, Bespoke, and Zen directions explored before landing on the final design',
+      },
+      {
+        label: 'Patents',
+        value: '7',
+        supporting: 'Interface design patents awarded',
+      },
+      {
+        label: 'Award',
+        value: 'Red Dot 2018',
+        supporting: 'Red Dot Award in Product Design',
+      },
+      {
+        label: 'Announced',
+        value: 'May 2018',
+        supporting: 'Shipped as Bombardier\'s "nice Touch CMS"',
+      },
+    ],
+    heroImageSrc: '/work/bombardier.png',
+    heroImageAlt: 'Bombardier private jet cabin with media and cabin control tablet and tactile dial',
+    sections: [
+      {
+        id: 'problem',
+        eyebrow: 'Problem',
+        title: 'Fragmented physical controls',
+        paragraphs: [
+          "Bombardier's private jet cabins relied on scattered physical switches and recessed buttons for lighting, shades, temperature, and entertainment — functional, but with no single, intuitive way to control the cabin experience.",
+        ],
+        visualSuggestions: ['Existing cabin controls', 'Recessed button panel'],
+      },
+      {
+        id: 'role',
+        eyebrow: 'My Role',
+        title: 'Senior Interaction Designer',
+        paragraphs: [],
+        bullets: [
+          'Explored three concept directions — Performance, Bespoke, and Zen — for cabin controls',
+          'Designed and iterated wireframes for the side-ledge, tablet, and dial interfaces',
+          'Refined the winning concept from early wireframes through to a shippable interaction model',
+        ],
+        visualSuggestions: ['Screen placeholder', 'Screen placeholder'],
+      },
+      {
+        id: 'insight',
+        eyebrow: 'Insight',
+        title: 'The right control needed the right feel',
+        paragraphs: [
+          'Cabin controls could be more than functional — the physical form and interaction model needed to match the tone of a private aircraft cabin. Rather than assume one answer, the same problem was explored through three different lenses.',
+          'Three directions, three philosophies:',
+        ],
+        bullets: [
+          'Performance — a digital, dashboard-driven approach',
+          'Bespoke — personalized, inspired by travel and leather goods',
+          'Zen — calm, tactile, and minimal',
+        ],
+        visualSuggestions: ['Performance mood board', 'Bespoke mood board', 'Zen mood board'],
+      },
+      {
+        id: 'reframe',
+        eyebrow: 'Knob Experience',
+        title: 'One dial, five gestures',
+        paragraphs: [
+          "The Zen concept's dial became the core interaction model, reduced to a small, consistent gesture set:",
+        ],
+        bullets: [
+          'Swipe to wake',
+          'Tap to select an item',
+          'Touch the ring to show adjustment',
+          'Turn the dial to make an adjustment',
+          'Release the ring to show the selection screen',
+        ],
+        visualSuggestions: ['Knob interaction diagrams'],
+      },
+      {
+        id: 'prototype',
+        eyebrow: 'Wireframes & Iterations',
+        title: 'Wireframing three directions in parallel',
+        paragraphs: [
+          'Each concept was pushed through wireframes and a first round of visual design before converging on a single direction.',
+        ],
+        bulletGroups: [
+          {
+            label: 'What Was Prototyped',
+            items: [
+              'Performance — a browsable media and cabin-control dashboard with zone maps for lighting, shades, and speakers',
+              'Bespoke — a side-ledge touch interface with Watch / Listen / Cabin menus and seat-level sliders for reading light, table light, and volume',
+              'Zen — a tactile dial with expanding icon sets for lights, temperature, and shades',
+            ],
+          },
+        ],
+        visualSuggestions: ['Performance Round 1', 'Bespoke Round 1', 'Zen Round 1'],
+      },
+      {
+        id: 'challenge-dial',
+        eyebrow: 'Challenge',
+        title: 'Cramming a full cabin system onto a single dial',
+        paragraphs: [
+          'The dial is small enough to sit on a side table, but it needed to control media playback, zone lighting, presets, shades, temperature, and cabin-attendant calls — all through turning, tapping, and swiping one compact physical control.',
+        ],
+        visualSuggestions: ['Knob wireframes', 'Icon set explorations'],
+      },
+      {
+        id: 'challenge-direction',
+        eyebrow: 'Challenge',
+        title: 'Choosing one direction from three',
+        paragraphs: [
+          'Performance, Bespoke, and Zen each had a fully realized wireframe and a first round of visual design before the team converged on the dial-based Zen direction as the interaction model that ultimately shipped.',
+        ],
+        visualSuggestions: ['3 Concepts mood board comparison'],
+      },
+      {
+        id: 'outcome',
+        eyebrow: 'Outcome',
+        title: 'Announced as the "nice Touch CMS"',
+        paragraphs: [
+          'The dial-based interaction model shipped on the Bombardier Global 7500, giving passengers tactile control over lighting, temperature, shades, and entertainment from a single knob.',
+        ],
+        bullets: [
+          'Announced in May 2018 as the "nice Touch CMS"',
+          'Awarded 7 interface design patents',
+          'Won a Red Dot Award in Product Design, 2018',
+        ],
+      },
+      {
+        id: 'reflection',
+        eyebrow: 'Reflection',
+        title: 'Lorem ipsum dolor sit amet',
+        paragraphs: ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.'],
+        bulletGroups: [
+          {
+            label: 'Lorem ipsum',
+            items: ['Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum'],
+          },
+        ],
+        closingParagraphs: ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.'],
+      },
+    ],
   },
 }
 

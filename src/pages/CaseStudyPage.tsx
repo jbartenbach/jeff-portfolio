@@ -7,13 +7,13 @@ function sectionEyebrow(section: { eyebrow?: string; id: string }) {
   return section.eyebrow ?? section.id.replace(/-/g, ' ')
 }
 
-/** Highlight +, →, and ↓ in amber to match homepage / Figma stats treatment. */
+/** Highlight +, →, ↓, and > in amber to match homepage / Figma stats treatment. */
 function StatValue({ value }: { value: string }) {
-  const parts = value.split(/([+→↓])/)
+  const parts = value.split(/([+→↓>])/)
   return (
     <>
       {parts.map((part, i) =>
-        part === '+' || part === '→' || part === '↓' ? (
+        part === '+' || part === '→' || part === '↓' || part === '>' ? (
           <span key={`${part}-${i}`} className="text-amber-500">
             {part}
           </span>
