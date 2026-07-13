@@ -108,17 +108,17 @@ export const caseStudyList: CaseStudyListItem[] = [
     imageAlt: 'Bombardier private jet cabin with media and cabin control tablet and tactile dial',
     published: true,
   },
-  {
-    slug: 'maximus-health-data',
-    title: 'Maximus health data',
-    tag: 'Personalized medicine',
-    blurb:
-      'Made health data understandable and actionable. Simplified complex biomarker data. Designed for trends and progress. Introduced AI-driven prototyping.',
-    meta: '2023–2026 · Principal Product Designer',
-    imageSrc: '/work/maximus-health-data.png',
-    imageAlt: 'Maximus at-home health kit with lab results app showing Maximus score and cardiovascular risk',
-    published: true,
-  },
+  // {
+  //   slug: 'maximus-health-data',
+  //   title: 'Maximus health data',
+  //   tag: 'Personalized medicine',
+  //   blurb:
+  //     'Made health data understandable and actionable. Simplified complex biomarker data. Designed for trends and progress. Introduced AI-driven prototyping.',
+  //   meta: '2023–2026 · Principal Product Designer',
+  //   imageSrc: '/work/maximus-health-data.png',
+  //   imageAlt: 'Maximus at-home health kit with lab results app showing Maximus score and cardiovascular risk',
+  //   published: true,
+  // },
 ]
 
 export const caseStudiesBySlug: Record<string, CaseStudy> = {
