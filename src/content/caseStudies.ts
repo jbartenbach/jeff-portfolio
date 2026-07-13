@@ -76,17 +76,6 @@ export type CaseStudy = {
 
 export const caseStudyList: CaseStudyListItem[] = [
   {
-    slug: 'wink',
-    title: 'Wink',
-    tag: 'Smart Home · Platform · Hardware',
-    blurb:
-      'Founding designer to VP. Built the team, designed the platform, shipped 60+ products across 40+ brand partners. Hub 2 reduced setup from 30 to 7 minutes.',
-    meta: '2013–2018 · Founding Designer → VP',
-    imageSrc: '/work/wink.png',
-    imageAlt: 'Wink smart home app on three iPhones showing home, shortcuts, and robots screens',
-    published: true,
-  },
-  {
     slug: 'daily-harvest',
     title: 'Daily Harvest',
     tag: 'e-commerce subscription',
@@ -95,6 +84,28 @@ export const caseStudyList: CaseStudyListItem[] = [
     meta: '2019–2022 · Principal Product Designer',
     imageSrc: '/work/daily-harvest.png',
     imageAlt: 'Daily Harvest mobile site on iPhone showing hero and product offerings',
+    published: true,
+  },
+  {
+    slug: 'maximus-health-data',
+    title: 'Maximus Health',
+    tag: 'Personalized medicine',
+    blurb:
+      'Made health data understandable and actionable. Simplified complex biomarker data. Designed for trends and progress. Introduced AI-driven prototyping.',
+    meta: '2025–2026 · Principal Product Designer',
+    imageSrc: '/work/maximus-health-data.png',
+    imageAlt: 'Maximus at-home health kit with lab results app showing Maximus score and cardiovascular risk',
+    published: true,
+  },
+  {
+    slug: 'wink',
+    title: 'Wink',
+    tag: 'Smart Home · Platform · Hardware',
+    blurb:
+      'Founding designer to VP. Built the team, designed the platform, shipped 60+ products across 40+ brand partners. Hub 2 reduced setup from 30 to 7 minutes.',
+    meta: '2013–2018 · Founding Designer → VP',
+    imageSrc: '/work/wink.png',
+    imageAlt: 'Wink smart home app on three iPhones showing home, shortcuts, and robots screens',
     published: true,
   },
   {
@@ -108,17 +119,6 @@ export const caseStudyList: CaseStudyListItem[] = [
     imageAlt: 'Bombardier private jet cabin with media and cabin control tablet and tactile dial',
     published: true,
   },
-  // {
-  //   slug: 'maximus-health-data',
-  //   title: 'Maximus health data',
-  //   tag: 'Personalized medicine',
-  //   blurb:
-  //     'Made health data understandable and actionable. Simplified complex biomarker data. Designed for trends and progress. Introduced AI-driven prototyping.',
-  //   meta: '2023–2026 · Principal Product Designer',
-  //   imageSrc: '/work/maximus-health-data.png',
-  //   imageAlt: 'Maximus at-home health kit with lab results app showing Maximus score and cardiovascular risk',
-  //   published: true,
-  // },
 ]
 
 export const caseStudiesBySlug: Record<string, CaseStudy> = {
@@ -344,15 +344,187 @@ export const caseStudiesBySlug: Record<string, CaseStudy> = {
   },
   'maximus-health-data': {
     slug: 'maximus-health-data',
-    title: 'Maximus health data',
-    subtitle: 'Making health data understandable and actionable',
+    title: 'Maximus Health',
+    subtitle: 'Making complex health data feel understandable and meaningful',
     tag: 'Personalized medicine',
     dek:
-      'Made health data understandable and actionable. Simplified complex biomarker data. Designed for trends and progress. Introduced AI-driven prototyping.',
-    meta: [{ label: 'Role', value: '2023–2026 · Principal Product Designer' }],
+      'Designed a system to help users understand and track their biomarker data over time — transforming clinical information into intuitive, actionable insights.',
+    meta: [
+      { label: 'Role', value: 'Principal Product Designer' },
+      { label: 'Timeline', value: '2025–2026' },
+      { label: 'Team', value: 'Partnered with Product, Engineering, and Medical teams' },
+      { label: 'Scope', value: 'Customer-facing biomarker dashboard and data visualization system' },
+    ],
     summary: [],
-    sections: [],
-    placeholder: true,
+    heroImageSrc: '/work/maximus-health-data.png',
+    heroImageAlt:
+      'Maximus at-home health kit with lab results app showing Maximus score and cardiovascular risk',
+    sections: [
+      {
+        id: 'problem',
+        eyebrow: 'The problem',
+        title: 'Informative, but not helpful',
+        paragraphs: [
+          'Users were receiving dense lab reports, isolated data points, and little context for meaning.',
+          'The experience was informative, but not helpful.',
+        ],
+        bulletGroups: [
+          {
+            label: 'They struggled to answer:',
+            items: ['"Is this good?"', '"Am I improving?"', '"What should I do?"'],
+          },
+        ],
+        images: [
+          {
+            src: '/work/maximus-problem.png',
+            alt: 'Maximus hormone markers results showing Free Testosterone and Total Testosterone baseline vs follow-up with fold increases and percentile scales',
+          },
+        ],
+      },
+      {
+        id: 'role',
+        eyebrow: 'My Role',
+        title: 'Design lead for the health data experience',
+        paragraphs: [],
+        bullets: [
+          'Led design of the customer-facing experience',
+          'Defined system architecture for data visualization',
+          'Partnered with product, engineering, and medical teams',
+          'Introduced AI-driven prototyping workflows',
+        ],
+        images: [
+          {
+            src: '/work/maximus-role.png',
+            alt: 'Maximus fulfillment flow diagram with connected mobile screens for questionnaires, lab scheduling, and status checklists',
+          },
+        ],
+      },
+      {
+        id: 'insight',
+        eyebrow: 'The Insight',
+        title: 'Progress, not protocols',
+        paragraphs: ['Users don\'t think in terms of biomarkers, ranges, or clinical thresholds.'],
+        bulletGroups: [
+          {
+            label: 'They think in terms of:',
+            items: ['Progress', 'Improvement', 'Feeling better'],
+          },
+        ],
+        closingParagraphs: [
+          'The experience needed to shift from data presentation to narrative understanding.',
+        ],
+        images: [
+          {
+            src: '/work/maximus-insight-2.png',
+            alt: 'Maximus Total Testosterone screen with in-range result and trend graph from November to February',
+          },
+          {
+            src: '/work/maximus-insight-1.png',
+            alt: 'Maximus Heart health screen with cardiovascular disease risk score and actionable guidance',
+          },
+        ],
+      },
+      {
+        id: 'reframe',
+        eyebrow: 'Designing the System',
+        title: 'A system built around trends, not snapshots',
+        paragraphs: ['We focused on:'],
+        bullets: [
+          'Trends over time — not snapshots',
+          'Contextual ranges — what\'s normal, optimal, improving',
+          'Visual clarity — reduce cognitive load',
+          'Actionability — what to do next',
+        ],
+        images: [
+          {
+            src: '/work/maximus-reframe.png',
+            alt: 'Four Maximus Testosterone Labs screens showing Free Testosterone from baseline through multi-result trend tracking',
+          },
+        ],
+      },
+      {
+        id: 'prototype',
+        eyebrow: 'Prototyping with AI',
+        title: 'Prototyping as an accelerant',
+        paragraphs: [
+          'To accelerate exploration, I introduced Figma Make for rapid UI generation and React-based prototypes built with AI agents in Cursor.',
+        ],
+        bulletGroups: [
+          {
+            label: 'This Allowed Us To',
+            items: [
+              'Test interaction models quickly',
+              'Simulate real data behaviors',
+              'Align teams earlier in the process',
+            ],
+          },
+        ],
+        closingParagraphs: [
+          'This AI-native workflow has become a core part of how I approach early-stage design exploration.',
+        ],
+        images: [
+          {
+            src: '/work/maximus-prototype.png',
+            alt: 'Hand holding a phone in a gym showing Maximus Heart health and Hormone health dashboard cards',
+          },
+        ],
+      },
+      {
+        id: 'challenge',
+        eyebrow: 'Challenge',
+        title: 'Balancing accuracy with emotional clarity',
+        paragraphs: [
+          'Simplifying clinical data risked oversimplifying it. Every visual decision had to hold up against medical accuracy while still feeling clear and motivating to someone with no clinical background — which meant working closely with the medical team to make sure "simple" never became "wrong."',
+        ],
+        bulletGroups: [
+          {
+            label: 'Key Design Decisions',
+            items: [
+              'Prioritized trend visualization over raw numbers',
+              'Designed for emotional clarity, not just accuracy',
+              'Reduced clinical complexity into digestible layers',
+              'Used prototyping to validate interaction patterns',
+            ],
+          },
+        ],
+        images: [
+          {
+            src: '/work/maximus-challenge.png',
+            alt: 'Maximus app on iPhone beside blood collection vials showing Hormone health and Metabolic health scores',
+          },
+        ],
+      },
+      // {
+      //   id: 'outcome',
+      //   eyebrow: 'Outcome',
+      //   title: 'A clearer, more motivating way to see progress',
+      //   paragraphs: ['The redesigned experience changed how users engaged with their own health data.'],
+      //   bullets: [
+      //     'Created a more intuitive and engaging way to understand health data',
+      //     'Improved clarity around user progress and outcomes',
+      //     'Accelerated design iteration and team alignment',
+      //   ],
+      // },
+      // {
+      //   id: 'reflection',
+      //   eyebrow: 'Reflection',
+      //   title: 'Emotion is part of the data',
+      //   paragraphs: ['This work reinforced a few things:'],
+      //   bulletGroups: [
+      //     {
+      //       label: 'I Learned That',
+      //       items: [
+      //         'Emotion matters in data-heavy experiences',
+      //         'Prototyping can unlock understanding faster than documentation',
+      //         'AI is playing a growing role in accelerating product development',
+      //       ],
+      //     },
+      //   ],
+      //   closingParagraphs: [
+      //     "It's part of why AI-assisted prototyping has become a core part of how I work today.",
+      //   ],
+      // },
+    ],
   },
   'daily-harvest': {
     slug: 'daily-harvest',

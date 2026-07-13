@@ -134,7 +134,7 @@ export default function CaseStudyPage() {
         )}
 
         {study.sections.map((section, index) => {
-          const mediaFirst = index % 2 === 1
+          const mediaFirst = index % 2 === 0
           const images = section.images ?? []
           const visuals = section.visualSuggestions ?? []
           const hasPrototype = Boolean(section.prototype)
@@ -144,7 +144,7 @@ export default function CaseStudyPage() {
             <section
               key={section.id}
               id={section.id}
-              className={`border-b border-slate-800/70 ${index % 2 === 0 ? 'bg-slate-950' : 'bg-[#0a1022]'} scroll-mt-24`}
+              className={`border-b border-slate-800/70 ${index % 2 === 0 ? 'bg-[#0a1022]' : 'bg-slate-950'} scroll-mt-24`}
             >
               <div className="mx-auto max-w-5xl px-6 py-14 md:py-20">
                 <div

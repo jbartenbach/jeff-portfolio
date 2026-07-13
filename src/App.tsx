@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import ScrollToTop from './components/ScrollToTop'
 import { AuthProvider } from './context/AuthContext'
 import ContactPage from './pages/ContactPage'
 import PortfolioHome from './pages/PortfolioHome'
@@ -10,6 +11,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<PortfolioHome />} />
           <Route path="/work" element={<WorkIndex />} />
