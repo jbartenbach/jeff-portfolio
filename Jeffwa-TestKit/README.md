@@ -27,13 +27,17 @@ This is expected behavior in the test environment and does not reflect productio
 
 ---
 
-## Browser table viewer
+## Browser table viewer (local only)
 
-Open [`table.html`](./table.html) (locally: `/Jeffwa-TestKit/table.html` with `npm run dev`).
+This folder lives at the **repo root**, not in `public/`, so it is **not** deployed to the live site.
+
+With `npm run dev` running, open:
+
+[http://localhost:5173/Jeffwa-TestKit/table.html](http://localhost:5173/Jeffwa-TestKit/table.html)
 
 Pick a sample scenario and click **Fetch & fill tables** to call the live test API and render clocks, exemptions, violations, and report history in tables.
 
-The page loads `ApiKey.txt` and the sample request JSON from this folder. API calls go through the `/hoscodex` proxy (Vite locally, Netlify in production) because the API does not allow direct browser CORS.
+The page loads `ApiKey.txt` and the sample request JSON from this folder. API calls go through the `/hoscodex` Vite proxy because the API does not allow direct browser CORS.
 
 ---
 

@@ -6,13 +6,6 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# Proxy HOS Codex test API for Jeffwa-TestKit/table.html (must be before SPA fallback)
-[[redirects]]
-  from = "/hoscodex/*"
-  to = "https://test.api.hoscodex.com/:splat"
-  status = 200
-  force = true
-
 # React Router: /admin etc. must serve index.html on refresh
 [[redirects]]
   from = "/*"
