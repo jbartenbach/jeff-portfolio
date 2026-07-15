@@ -17,6 +17,8 @@ dist
 secrets/
 *.service-account.json
 *service-account*.json
+Jeffwa-TestKit/
+
 dist-ssr
 *.local
 
