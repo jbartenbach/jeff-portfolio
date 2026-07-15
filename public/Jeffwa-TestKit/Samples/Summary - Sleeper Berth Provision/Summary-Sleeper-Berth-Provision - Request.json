@@ -1,0 +1,116 @@
+{
+  "driver_id": "J73",
+  "ruleset": "ruleset.us.interstate.property.7day",
+  "calculation_end_utc": "2026-05-31T03:00:00Z",
+  "start_of_day_offset": "0:00:00:00",
+  "iana_id": "America/Los_Angeles",
+  "home_terminal": {
+    "location_id": "ED",
+    "name": "Edmonds",
+    "latitude": 47.8112,
+    "longitude": -122.3769,
+    "city": "Edmonds",
+    "state": "WA",
+    "postal_code": "98020",
+    "country": ""
+  },
+  "settings": null,
+  "events": [
+    {
+      "timestamp_utc": "2026-05-29T02:00:00Z",
+      "event_type": "event-type.duty-status-change",
+      "event_code": "",
+      "ruleset": "",
+      "duty_status": "duty-status.off",
+      "exemption": "",
+      "origin": "origin.manual",
+      "odometer": 0,
+      "engine_hours": 0,
+      "event_id": "",
+      "location": null
+    },
+    {
+      "timestamp_utc": "2026-05-30T12:00:00Z",
+      "event_type": "event-type.duty-status-change",
+      "event_code": "",
+      "ruleset": "",
+      "duty_status": "duty-status.drive",
+      "exemption": "",
+      "origin": "origin.manual",
+      "odometer": 0,
+      "engine_hours": 0,
+      "event_id": "",
+      "location": {
+        "location_id": "ED",
+        "name": "Edmonds",
+        "latitude": 47.8112,
+        "longitude": -122.3769,
+        "city": "Edmonds",
+        "state": "WA",
+        "postal_code": "98020",
+        "country": ""
+      }
+    },
+    {
+      "timestamp_utc": "2026-05-30T20:00:00Z",
+      "event_type": "event-type.duty-status-change",
+      "event_code": "",
+      "ruleset": "",
+      "duty_status": "duty-status.off",
+      "exemption": "",
+      "origin": "origin.manual",
+      "odometer": 0,
+      "engine_hours": 0,
+      "event_id": "",
+      "location": null
+    },
+    {
+      "timestamp_utc": "2026-05-30T22:00:00Z",
+      "event_type": "event-type.duty-status-change",
+      "event_code": "",
+      "ruleset": "",
+      "duty_status": "duty-status.drive",
+      "exemption": "",
+      "origin": "origin.manual",
+      "odometer": 0,
+      "engine_hours": 0,
+      "event_id": "",
+      "location": null
+    },
+    {
+      "timestamp_utc": "2026-05-31T01:00:00Z",
+      "event_type": "event-type.duty-status-change",
+      "event_code": "",
+      "ruleset": "",
+      "duty_status": "duty-status.on-duty",
+      "exemption": "",
+      "origin": "origin.manual",
+      "odometer": 0,
+      "engine_hours": 0,
+      "event_id": "",
+      "location": {
+        "location_id": "ED",
+        "name": "Edmonds",
+        "latitude": 47.8112,
+        "longitude": -122.3769,
+        "city": "Edmonds",
+        "state": "WA",
+        "postal_code": "98020",
+        "country": ""
+      }
+    },
+    {
+      "timestamp_utc": "2026-05-31T02:00:00Z",
+      "event_type": "event-type.duty-status-change",
+      "event_code": "",
+      "ruleset": "",
+      "duty_status": "duty-status.sleeper-berth",
+      "exemption": "",
+      "origin": "origin.manual",
+      "odometer": 0,
+      "engine_hours": 0,
+      "event_id": "",
+      "location": null
+    }
+  ]
+}

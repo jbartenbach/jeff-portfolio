@@ -11,6 +11,14 @@ export default defineConfig({
     // If 5173 is already taken (stale `npm run dev`), Vite uses the next free port — check the terminal URL.
     strictPort: false,
     open: true,
+    // Proxy HOS Codex test API for the Jeffwa-TestKit table viewer (avoids browser CORS).
+    proxy: {
+      '/hoscodex': {
+        target: 'https://test.api.hoscodex.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/hoscodex/, ''),
+      },
+    },
   },
   build: {
     // Vite 8 uses Rolldown; it can warn when plugin time dominates the link phase.

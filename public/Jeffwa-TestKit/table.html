@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HOS Codex — API Table Viewer</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #1e293b;
+        --border: #334155;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #38bdf8;
+        --ok: #4ade80;
+        --warn: #fbbf24;
+        --bad: #f87171;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.45;
+      }
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem 1.25rem 4rem;
+      }
+      h1 {
+        margin: 0 0 0.35rem;
+        font-size: 1.5rem;
+        font-weight: 650;
+      }
+      .sub {
+        color: var(--muted);
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+      }
+      .controls {
+        display: grid;
+        gap: 0.85rem;
+        grid-template-columns: 1fr 1fr auto;
+        align-items: end;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.25rem;
+      }
+      @media (max-width: 720px) {
+        .controls {
+          grid-template-columns: 1fr;
+        }
+      }
+      label {
+        display: grid;
+        gap: 0.35rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+      }
+      select,
+      button {
+        font: inherit;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: #0b1220;
+        color: var(--text);
+        padding: 0.55rem 0.75rem;
+      }
+      button {
+        background: var(--accent);
+        color: #0b1220;
+        border-color: transparent;
+        font-weight: 650;
+        cursor: pointer;
+        min-width: 8.5rem;
+      }
+      button:disabled {
+        opacity: 0.55;
+        cursor: wait;
+      }
+      .status {
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: var(--muted);
+        min-height: 1.25rem;
+      }
+      .status.error {
+        color: var(--bad);
+      }
+      .status.ok {
+        color: var(--ok);
+      }
+      section {
+        margin-bottom: 1.5rem;
+      }
+      section h2 {
+        margin: 0 0 0.6rem;
+        font-size: 1rem;
+        font-weight: 650;
+      }
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--panel);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.55rem 0.75rem;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+      th {
+        color: var(--muted);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: #111827;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      .pill {
+        display: inline-block;
+        padding: 0.15rem 0.45rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .pill.bad {
+        background: rgba(248, 113, 113, 0.15);
+        color: var(--bad);
+      }
+      .pill.warn {
+        background: rgba(251, 191, 36, 0.15);
+        color: var(--warn);
+      }
+      .pill.ok {
+        background: rgba(74, 222, 128, 0.15);
+        color: var(--ok);
+      }
+      details {
+        margin-top: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--panel);
+        padding: 0.75rem 1rem;
+      }
+      pre {
+        margin: 0.75rem 0 0;
+        overflow: auto;
+        max-height: 420px;
+        font-size: 0.75rem;
+        color: #cbd5e1;
+      }
+      .empty {
+        color: var(--muted);
+        font-size: 0.9rem;
+        padding: 0.75rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>HOS Codex API Table Viewer</h1>
+      <p class="sub">
+        Pulls live data from the test API using the sample request payloads in this Test Kit, then renders
+        clocks, exemptions, violations, and (for reports) work shifts / days in tables.
+      </p>
+
+      <div class="controls">
+        <label>
+          Scenario
+          <select id="scenario"></select>
+        </label>
+        <label>
+          Endpoint
+          <select id="endpoint">
+            <option value="summary">compliance/summary</option>
+            <option value="report">compliance/report</option>
+          </select>
+        </label>
+        <button id="run" type="button">Fetch &amp; fill tables</button>
+      </div>
+
+      <div id="status" class="status">Choose a scenario and click Fetch.</div>
+      <div id="tables"></div>
+    </main>
+
+    <script>
+      const SCENARIOS = [
+        {
+          id: 'summary-violation',
+          label: 'Summary — In Violation',
+          endpoint: 'summary',
+          request: './Samples/Summary - In Violation/Summary-Violation Request.json',
+        },
+        {
+          id: 'summary-sleeper',
+          label: 'Summary — Sleeper Berth Provision',
+          endpoint: 'summary',
+          request:
+            './Samples/Summary - Sleeper Berth Provision/Summary-Sleeper-Berth-Provision - Request.json',
+        },
+        {
+          id: 'report-warning',
+          label: 'Report — Warning',
+          endpoint: 'report',
+          request: './Samples/Report - Warning/Report-Warning Request.json',
+        },
+        {
+          id: 'full-cycle',
+          label: 'Full Cycle (Report)',
+          endpoint: 'report',
+          request: './Samples/Full Cycle/Full Cycle Request.json',
+        },
+      ]
+
+      const API_BASE = '/hoscodex'
+      const scenarioEl = document.getElementById('scenario')
+      const endpointEl = document.getElementById('endpoint')
+      const runEl = document.getElementById('run')
+      const statusEl = document.getElementById('status')
+      const tablesEl = document.getElementById('tables')
+
+      for (const s of SCENARIOS) {
+        const opt = document.createElement('option')
+        opt.value = s.id
+        opt.textContent = s.label
+        scenarioEl.appendChild(opt)
+      }
+
+      scenarioEl.addEventListener('change', () => {
+        const s = SCENARIOS.find((x) => x.id === scenarioEl.value)
+        if (s) endpointEl.value = s.endpoint
+      })
+      scenarioEl.dispatchEvent(new Event('change'))
+
+      function shortCode(value) {
+        if (value == null || value === '') return '—'
+        return String(value).replace(/^(duty-status|clock-state|compliance-status|clock|violation|exemption|ruleset|cycle|restart|warning)\./, '')
+      }
+
+      function hms(obj) {
+        if (!obj) return '—'
+        if (typeof obj === 'string') return obj
+        return obj.hms ?? '—'
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+      }
+
+      function statusPill(status) {
+        const raw = String(status || '')
+        const cls = raw.includes('violation') ? 'bad' : raw.includes('at-risk') ? 'warn' : 'ok'
+        return `<span class="pill ${cls}">${escapeHtml(shortCode(raw))}</span>`
+      }
+
+      function tableHtml(headers, rows) {
+        if (!rows.length) return '<div class="empty">No rows</div>'
+        return `
+          <div class="table-wrap">
+            <table>
+              <thead><tr>${headers.map((h) => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>
+              <tbody>
+                ${rows
+                  .map(
+                    (row) =>
+                      `<tr>${row.map((cell) => `<td>${cell}</td>`).join('')}</tr>`,
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+          </div>`
+      }
+
+      function section(title, content) {
+        return `<section><h2>${escapeHtml(title)}</h2>${content}</section>`
+      }
+
+      function render(data) {
+        const summary = data.summary || {}
+        const compliance = summary.compliance_status || {}
+        const duty = summary.current_duty_status || {}
+        const home = summary.home_terminal || {}
+
+        const overview = tableHtml(
+          ['Field', 'Value'],
+          [
+            ['Driver', escapeHtml(data.driver_id ?? '—')],
+            ['Report timestamp (UTC)', escapeHtml(data.report_timestamp_utc ?? '—')],
+            ['Transaction', escapeHtml(data.transaction_id ?? '—')],
+            ['Ruleset', escapeHtml(shortCode(summary.current_ruleset))],
+            ['Cycle', escapeHtml(shortCode(summary.current_cycle))],
+            ['Short haul', escapeHtml(String(summary.in_short_haul ?? '—'))],
+            ['Home terminal', escapeHtml(home.name ? `${home.name}, ${home.state}` : '—')],
+            ['Compliance', statusPill(compliance.status)],
+            [
+              'Violations',
+              escapeHtml((compliance.violations || []).map(shortCode).join(', ') || '—'),
+            ],
+            [
+              'Warnings',
+              escapeHtml((compliance.warnings || data.warnings || []).map(shortCode).join(', ') || '—'),
+            ],
+            ['Duty status', escapeHtml(shortCode(duty.duty_status))],
+            ['Duty start → end', escapeHtml(`${duty.start_utc || '—'} → ${duty.end_utc || '—'}`)],
+            ['Duty duration', escapeHtml(hms(duty.duration))],
+            ['Drive time remaining', escapeHtml(hms(summary.drive_time_remaining?.duration))],
+          ],
+        )
+
+        const clocks = tableHtml(
+          ['Clock', 'Remaining', 'State'],
+          (summary.clocks || []).map((c) => [
+            escapeHtml(shortCode(c.clock_id)),
+            escapeHtml(hms(c.time_remaining)),
+            escapeHtml(shortCode(c.state)),
+          ]),
+        )
+
+        const exemptions = tableHtml(
+          ['Exemption', 'Applied', 'In use', 'Available', 'Used', 'Remaining'],
+          (summary.exemptions || []).map((e) => [
+            escapeHtml(shortCode(e.exemption)),
+            escapeHtml(String(e.is_applied ?? '—')),
+            escapeHtml(String(e.is_in_use ?? '—')),
+            escapeHtml(String(e.is_available ?? '—')),
+            escapeHtml(hms(e.used_duration)),
+            escapeHtml(hms(e.remaining_duration)),
+          ]),
+        )
+
+        const availability = tableHtml(
+          ['Restart UTC', 'Rest', 'Recovered drive', 'Rest type', 'Reason', 'Limiting clock'],
+          (summary.availability_scenarios || []).map((a) => [
+            escapeHtml(a.restart_utc ?? '—'),
+            escapeHtml(hms(a.rest_duration)),
+            escapeHtml(hms(a.recovered_drive_duration)),
+            escapeHtml(a.rest_type ?? '—'),
+            escapeHtml(a.reason ?? '—'),
+            escapeHtml(shortCode(a.limiting_clock)),
+          ]),
+        )
+
+        let historical = ''
+        const ruleset = (data.rulesets || [])[0]
+        if (ruleset) {
+          const violRows = (ruleset.violations || []).map((v) => [
+            escapeHtml(shortCode(v.violation_id || v)),
+            escapeHtml(v.start_utc ?? '—'),
+            escapeHtml(v.end_utc ?? '—'),
+            escapeHtml(hms(v.duration)),
+          ])
+          historical += section(
+            'Ruleset violations',
+            tableHtml(['Violation', 'Start UTC', 'End UTC', 'Duration'], violRows),
+          )
+
+          const shiftRows = (ruleset.workshifts || []).map((w) => [
+            escapeHtml(w.start_utc ?? '—'),
+            escapeHtml(w.end_utc ?? '—'),
+            escapeHtml(String(w.in_short_haul ?? '—')),
+            escapeHtml(String((w.duty_statuses || []).length)),
+            escapeHtml(String((w.violations || []).length)),
+          ])
+          historical += section(
+            'Work shifts',
+            tableHtml(['Start UTC', 'End UTC', 'Short haul', 'Duty statuses', 'Violations'], shiftRows),
+          )
+
+          const dayRows = (ruleset.days || []).map((day) => [
+            escapeHtml(day.start_utc ?? '—'),
+            escapeHtml(day.end_utc ?? '—'),
+            escapeHtml(String((day.duty_statuses || []).length)),
+            escapeHtml(String((day.violations || []).length)),
+            escapeHtml(String((day.restarts || []).length)),
+          ])
+          historical += section(
+            'Cycle days',
+            tableHtml(['Start UTC', 'End UTC', 'Duty statuses', 'Violations', 'Restarts'], dayRows),
+          )
+        }
+
+        tablesEl.innerHTML =
+          section('Overview', overview) +
+          section('Clocks', clocks) +
+          section('Exemptions', exemptions) +
+          section('Availability scenarios', availability) +
+          historical +
+          `<details>
+            <summary>Raw JSON response</summary>
+            <pre>${escapeHtml(JSON.stringify(data, null, 2))}</pre>
+          </details>`
+      }
+
+      async function run() {
+        const scenario = SCENARIOS.find((x) => x.id === scenarioEl.value)
+        const endpoint = endpointEl.value
+        runEl.disabled = true
+        statusEl.className = 'status'
+        statusEl.textContent = 'Loading API key and sample request…'
+        tablesEl.innerHTML = ''
+
+        try {
+          const [tokenRes, bodyRes] = await Promise.all([
+            fetch('./ApiKey.txt'),
+            fetch(encodeURI(scenario.request)),
+          ])
+          if (!tokenRes.ok) throw new Error(`Could not load ApiKey.txt (${tokenRes.status})`)
+          if (!bodyRes.ok) throw new Error(`Could not load sample request (${bodyRes.status})`)
+
+          const token = (await tokenRes.text()).trim()
+          const body = await bodyRes.json()
+
+          statusEl.textContent =
+            'Calling API (test env may cold-start — first request can take ~20–30s)…'
+
+          const res = await fetch(`${API_BASE}/api/v1/compliance/${endpoint}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Api-Token': token,
+            },
+            body: JSON.stringify(body),
+          })
+
+          const text = await res.text()
+          let data
+          try {
+            data = JSON.parse(text)
+          } catch {
+            throw new Error(`Non-JSON response (${res.status}): ${text.slice(0, 200)}`)
+          }
+          if (!res.ok) {
+            throw new Error(`API ${res.status}: ${JSON.stringify(data).slice(0, 300)}`)
+          }
+
+          render(data)
+          statusEl.className = 'status ok'
+          statusEl.textContent = `OK — ${endpoint} for ${data.driver_id || 'driver'} at ${data.report_timestamp_utc || 'n/a'}`
+        } catch (err) {
+          statusEl.className = 'status error'
+          statusEl.textContent = err.message || String(err)
+        } finally {
+          runEl.disabled = false
+        }
+      }
+
+      runEl.addEventListener('click', run)
+    </script>
+  </body>
+</html>
