@@ -5,7 +5,7 @@ import { AIPracticeSection, WhatIDoSection } from '../components/site/AboutSecti
 import { caseStudyList } from '../content/caseStudies'
 import { sectionLabelClass } from '../content/siteContent'
 
-const featuredSlugs = ['daily-harvest', 'maximus-health-data', 'wink'] as const
+const featuredSlugs = ['daily-harvest', 'wink', 'bombardier'] as const
 const featuredCaseStudies = featuredSlugs
   .map((slug) => caseStudyList.find((study) => study.slug === slug))
   .filter((study): study is (typeof caseStudyList)[number] => Boolean(study))
