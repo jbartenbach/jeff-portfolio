@@ -15,12 +15,15 @@ export default function PublicSiteChrome({ children }: Props) {
           <Link to="/" className="font-display text-2xl tracking-tight text-white hover:text-amber-100 transition-colors">
             Jeff Bartenbach
           </Link>
-          <nav className="flex gap-8 text-sm font-medium text-slate-400">
+          <nav className="flex flex-wrap justify-end gap-x-5 gap-y-2 text-sm font-medium text-slate-400 sm:gap-8">
             <Link to="/" className="hover:text-white transition-colors">
               Home
             </Link>
             <Link to="/work" className="hover:text-white transition-colors">
               Work
+            </Link>
+            <Link to="/design-help" className="hover:text-white transition-colors">
+              Work with me
             </Link>
             <Link to="/contact" className="hover:text-white transition-colors">
               Contact

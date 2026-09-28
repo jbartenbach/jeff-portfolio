@@ -12,6 +12,9 @@ export default function AdminLayout() {
             <Link to="/admin/dashboard" className="text-slate-900 hover:text-amber-700">
               Dashboard
             </Link>
+            <Link to="/admin/design-help" className="text-slate-600 hover:text-amber-700">
+              Design help
+            </Link>
             <Link to="/admin/tasks" className="text-slate-600 hover:text-amber-700">
               Tasks board
             </Link>

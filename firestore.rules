@@ -13,5 +13,42 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.auth.uid == request.resource.data.ownerUid;
     }
+
+    // Public inbound leads from /design-help (admin-only read/update)
+    match /designHelpLeads/{id} {
+      allow create: if request.resource.data.keys().hasAll([
+          'email', 'offer', 'status', 'referrer', 'source', 'path', 'createdAt'
+        ])
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 3
+        && request.resource.data.email.size() < 320
+        && request.resource.data.offer in ['consult', 'design_day', 'weekly']
+        && request.resource.data.status == 'new'
+        && request.resource.data.path is string
+        && request.resource.data.path.size() < 2000;
+      allow read, update: if request.auth != null;
+      allow delete: if false;
+    }
+
+    // Lightweight funnel events from /design-help
+    match /designHelpEvents/{id} {
+      allow create: if request.resource.data.keys().hasAll([
+          'name', 'offer', 'referrer', 'source', 'path', 'createdAt'
+        ])
+        && request.resource.data.name in [
+          'design_help_page_view',
+          'design_help_cta_click',
+          'design_help_form_view',
+          'design_help_lead_submit'
+        ]
+        && (
+          request.resource.data.offer == null
+          || request.resource.data.offer in ['consult', 'design_day', 'weekly']
+        )
+        && request.resource.data.path is string
+        && request.resource.data.path.size() < 2000;
+      allow read: if request.auth != null;
+      allow update, delete: if false;
+    }
   }
 }

@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import AdminLayout from './AdminLayout'
 import AdminLogin from './AdminLogin'
 import Dashboard from './Dashboard'
+import DesignHelpAdminPage from './DesignHelpAdminPage'
 import KanbanPage from './KanbanPage'
 import ProjectPage from './ProjectPage'
 import RequireAuth from './RequireAuth'
@@ -18,6 +19,7 @@ export default function AdminSection() {
         }
       >
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="design-help" element={<DesignHelpAdminPage />} />
         <Route path="projects/:id" element={<ProjectPage />} />
         <Route path="tasks" element={<KanbanPage />} />
       </Route>
